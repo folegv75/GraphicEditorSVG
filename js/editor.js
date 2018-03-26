@@ -1,3 +1,4 @@
+// посмотреть пример библиотеки paperjs.org
 // test ver after next
 let ShapeData = {};
 var xmlns = "http://www.w3.org/2000/svg";
