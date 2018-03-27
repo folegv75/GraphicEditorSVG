@@ -1,5 +1,5 @@
 // посмотреть пример библиотеки paperjs.org
-// test ver after next
+// 2918-03-27
 let ShapeData = {};
 var xmlns = "http://www.w3.org/2000/svg";
 
@@ -465,11 +465,12 @@ function CursorDown(E)
 			// если выбрали фигуру
 			if (ShapeData.FigureGroup != null) 
 			{
+				DeselectFigure(ShapeData.SelectedFigure);
 				figureType = ShapeData.FigureGroup.getAttributeNS(null, 'figuretype');
+				ShapeData.SelectedFigure = figureGroup;
 				if (figureType == 'rect') 
 				{
 					ShapeData.OperationMode = 'select-figure-start';
-					ShapeData.SelectedFigure = figureGroup;
 					currFigureX = +ShapeData.SelectedFigure.getAttributeNS(null, 'basex');
 					currFigureY = +ShapeData.SelectedFigure.getAttributeNS(null, 'basey');
 					ShapeData.DeltaFigureX = mouseCoord.offsetX - currFigureX;
@@ -477,6 +478,7 @@ function CursorDown(E)
 					ShapeData.StartShapeX = mouseCoord.offsetX;
 					ShapeData.StartShapeY = mouseCoord.offsetY;
 				}
+				SelectFigure(ShapeData.SelectedFigure);
 			}
 
 		}
@@ -491,8 +493,9 @@ function CursorMove(E)
 		CalculateFigureBounds();
 		DrawFigureContour();
 	} else
-		if (ShapeData.OperationMode == 'select-figure-start')
+		if (ShapeData.OperationMode == 'select-figure-start' || ShapeData.OperationMode == 'move-figure')
 		{
+			ShapeData.OperationMode = 'move-figure';
 			ShapeData.EndShapeX = E.OffsetX;
 			ShapeData.EndShapeY = E.OffsetY;
 
@@ -546,12 +549,15 @@ function CursorUp(E)
 		DestroyFigureContour();
 		CreateFigureOnHolst();
 		ShapeData.OperationMode = 'draw-figure';
-	} else
-		if (ShapeData.OperationMode == 'select-figure-start')
-		{
-			//ShapeData.SelectedFigure = null;
+	} else	if (ShapeData.OperationMode == 'move-figure')
+	{
+			MoveFigureApprove();			
 			ShapeData.OperationMode = 'select';
-		}
+	}
+	else if (ShapeData.OperationMode == 'select-figure-start') 
+	{
+		ShapeData.OperationMode = 'select';
+	}
 }
 
 // Пересчитать прямоугольник границы фигуры
@@ -709,9 +715,7 @@ function MoveFigure()
 		ShapeMoveRectangle(shape, newX, newY);
 
 		shape.setAttributeNS(null, 'x', newX);
-		shape.setAttributeNS(null, 'y', newY);
-		
-		
+		shape.setAttributeNS(null, 'y', newY);				
 
 	}
 	else
@@ -736,20 +740,66 @@ function MoveFigure()
 	
 }
 
+function MoveFigureApprove()
+{
+	if (ShapeData.SelectedFigure == null) return;
+	shape = ShapeData.SelectedFigure;
+	figuretype = shape.getAttributeNS(null, 'figuretype');
+	if (figuretype == 'rect')
+	{
+
+		newX = ShapeData.EndShapeX - ShapeData.DeltaFigureX;
+		newY = ShapeData.EndShapeY - ShapeData.DeltaFigureY;
+
+		if (newX < 0) newX = 0;
+		if (newY < 0) newY = 0;
+
+		if (newX > 1000) newX = 1000;
+		if (newY > 1000) newY = 1000;
+
+		ShapeMoveRectangle(shape, newX, newY);
+
+		shape.setAttributeNS(null, 'x', newX);
+		shape.setAttributeNS(null, 'y', newY);				
+
+	}
+	else
+		if (figuretype == 'line') 
+		{
+		}
+	else
+		if (figuretype == 'circle') 
+		{
+			cx = shape.getAttributeNS(null, 'cx');
+			cy = shape.getAttributeNS(null, 'cy');
+			shape.setAttributeNS(null, 'cx', E.offsetX);
+			shape.setAttributeNS(null, 'cy', E.offsetY);
+		}
+	let list = shape.querySelectorAll('link');
+	for (let i=0; i<list.length; i++)
+	{
+		let elm = list[i];
+		let linkline = document.getElementById(elm.getAttributeNS(null, 'figid'));
+		ShapeMoveApproveLinkTip(linkline, elm.getAttributeNS(null,'tip'));
+	}
+	
+}
+	
+
+
 // передвинуть конец линии
 function ShapeMoveLinkTip(linkline, tip)
 {
 	if (linkline==null) return;
-	let line = linkline.querySelector('line');
+	let line = linkline.querySelector('line:not([linetype])');
 	if (line==null) return;
+	let linecontur = linkline.querySelector('line[linetype=contur]');
 
 
 
 	if (tip=='begin') 
 	{
 
-
-	
 		// ------------------
 		let originX = +linkline.getAttributeNS(null, 'basex');
 		let originY = +linkline.getAttributeNS(null, 'basey');
@@ -760,6 +810,8 @@ function ShapeMoveLinkTip(linkline, tip)
 	
 		line.setAttributeNS(null,'x1',newx);
 		line.setAttributeNS(null,'y1',newy);
+		linecontur.setAttributeNS(null,'x1',newx);
+		linecontur.setAttributeNS(null,'y1',newy);
 
 		// это надо сделать после окончания перемещения
 		//linkline.setAttributeNS(null, 'basex', newx);
@@ -771,8 +823,74 @@ function ShapeMoveLinkTip(linkline, tip)
 		let originY = +linkline.getAttributeNS(null, 'endy');
 		let deltax = ShapeData.StartShapeX - originX;
 		let deltay = ShapeData.StartShapeY - originY;
-		line.setAttributeNS(null,'x2',ShapeData.EndShapeX - deltax);
-		line.setAttributeNS(null,'y2',ShapeData.EndShapeY - deltay);
+		let newx = ShapeData.EndShapeX - deltax;
+		let newy = ShapeData.EndShapeY - deltay;
+	
+		line.setAttributeNS(null,'x2',newx);
+		line.setAttributeNS(null,'y2',newy);
+		linecontur.setAttributeNS(null,'x2',newx);
+		linecontur.setAttributeNS(null,'y2',newy);
+
+		// это надо сделать после окончания перемещения
+		//linkline.setAttributeNS(null, 'endx', newx);
+		//linkline.setAttributeNS(null, 'endy', newy);
+		
+	}
+}
+
+// передвинуть конец линии
+function ShapeMoveApproveLinkTip(linkline, tip)
+{
+	if (linkline==null) return;
+	let line = linkline.querySelector('line:not([linetype])');
+	if (line==null) return;
+	let linecontur = linkline.querySelector('line[linetype=contur]');
+
+	if (tip=='begin') 
+	{
+
+		// ------------------
+		let originX = +linkline.getAttributeNS(null, 'basex');
+		let originY = +linkline.getAttributeNS(null, 'basey');
+		let deltax = ShapeData.StartShapeX - originX;
+		let deltay = ShapeData.StartShapeY - originY;
+		let newx = ShapeData.EndShapeX - deltax;
+		let newy = ShapeData.EndShapeY - deltay;
+	
+		line.setAttributeNS(null,'x1',newx);
+		line.setAttributeNS(null,'y1',newy);
+		linecontur.setAttributeNS(null,'x1',newx);
+		linecontur.setAttributeNS(null,'y1',newy);
+
+		// это надо сделать после окончания перемещения
+		linkline.setAttributeNS(null, 'basex', newx);
+		linkline.setAttributeNS(null, 'basey', newy);
+						
+	} else if (tip =='end')	
+	{
+		// let originX = +linkline.getAttributeNS(null, 'endx');
+		// let originY = +linkline.getAttributeNS(null, 'endy');
+		// let deltax = ShapeData.StartShapeX - originX;
+		// let deltay = ShapeData.StartShapeY - originY;
+		// line.setAttributeNS(null,'x2',ShapeData.EndShapeX - deltax);
+		// line.setAttributeNS(null,'y2',ShapeData.EndShapeY - deltay);
+
+		let originX = +linkline.getAttributeNS(null, 'endx');
+		let originY = +linkline.getAttributeNS(null, 'endy');
+		let deltax = ShapeData.StartShapeX - originX;
+		let deltay = ShapeData.StartShapeY - originY;
+		let newx = ShapeData.EndShapeX - deltax;
+		let newy = ShapeData.EndShapeY - deltay;
+	
+		line.setAttributeNS(null,'x2',newx);
+		line.setAttributeNS(null,'y2',newy);
+		linecontur.setAttributeNS(null,'x2',newx);
+		linecontur.setAttributeNS(null,'y2',newy);
+
+		// это надо сделать после окончания перемещения
+		linkline.setAttributeNS(null, 'endx', newx);
+		linkline.setAttributeNS(null, 'endy', newy);
+		
 	}
 }
 
@@ -1054,7 +1172,7 @@ function ShapeAddLine(x1, y1, x2, y2)
 	let groupShape = document.createElementNS(xmlns, 'g');
 	groupShape.id= genId();
 	
-	groupShape.setAttributeNS(null, 'isline', true);
+	groupShape.setAttributeNS(null, 'isfigure', true);
 	groupShape.setAttributeNS(null, 'basex', basex);
 	groupShape.setAttributeNS(null, 'basey', basey);
 	groupShape.setAttributeNS(null, 'endx', x2);
@@ -1090,14 +1208,25 @@ function ShapeAddLine(x1, y1, x2, y2)
 
 	let shape;
 	shape = document.createElementNS(xmlns, 'line');
+	shape.setAttributeNS(null, 'linetype', 'contur');
 	shape.setAttributeNS(null, 'x1', x1);
 	shape.setAttributeNS(null, 'y1', y1);
 	shape.setAttributeNS(null, 'x2', x2);
 	shape.setAttributeNS(null, 'y2', y2);
-	shape.setAttributeNS(null, 'fill', 'rgba(255,255,255,1)');
+	//shape.setAttributeNS(null, 'stroke', 'rgba(255,255,0,0.2)');
+	shape.setAttributeNS(null, 'stroke', 'rgba(255,255,0,0)');
+	// 20 пикселей чтобы кликать по линии
+	shape.setAttributeNS(null, 'stroke-width', '20');
+	groupShape.appendChild(shape);
+
+	shape = document.createElementNS(xmlns, 'line');
+	shape.setAttributeNS(null, 'x1', x1);
+	shape.setAttributeNS(null, 'y1', y1);
+	shape.setAttributeNS(null, 'x2', x2);
+	shape.setAttributeNS(null, 'y2', y2);
 	shape.setAttributeNS(null, 'stroke', 'black');
 	shape.setAttributeNS(null, 'stroke-width', '0.5');
-
+	
 	groupShape.appendChild(shape);
 
 	HolstAppendShape(groupShape);
@@ -1172,6 +1301,85 @@ function ShapeRenameCaptionCancel(fig)
 {
 	FigureRemoveGroupInput(fig);
 	ShapeRectSetCaption(fig, ShapeRectGetCaption(fig));
+}
+
+function DeselectFigure(figureGroup)
+{
+	console.log('deselect:',figureGroup);
+	if (figureGroup==null || figureGroup==undefined) return;
+	let figtype = figureGroup.getAttributeNS(null, 'figuretype');
+	if (figtype==null) return;
+	switch (figtype)
+	{
+		case 'rect':
+		{
+			DeSelectRect(figureGroup)		
+			break
+		}
+		case 'line':
+		{
+			DeSelectLine(figureGroup)		
+			break
+		}
+	}
+
+}
+
+function SelectFigure(figureGroup)
+{
+	console.log('select:',figureGroup);
+	if (figureGroup==null || figureGroup==undefined) return;
+	let figtype = figureGroup.getAttributeNS(null,'figuretype');
+	if (figtype==null) return;
+	switch (figtype)
+	{
+		case 'rect':
+		{
+	 		SelectRect(figureGroup)		
+			break
+		}
+		case 'line':
+		{
+			 SelectLine(figureGroup);			
+			break
+		}
+	}
+}
+
+function SelectRect(figureGroup)
+{
+	if (figureGroup==null || figureGroup==undefined) return;
+	let rect = figureGroup.querySelector('rect');
+	rect.setAttributeNS(null, 'stroke', 'red');
+	rect.setAttributeNS(null, 'stroke-width', '2');
+}
+
+function DeSelectRect(figureGroup)
+{
+	if (figureGroup==null || figureGroup==undefined) return;
+	let rect = figureGroup.querySelector('rect');
+	rect.setAttributeNS(null, 'stroke', 'black');
+	rect.setAttributeNS(null, 'stroke-width', '1');	
+}
+
+function SelectLine(figureGroup)
+{
+	if (figureGroup==null || figureGroup==undefined) return;
+	let line = figureGroup.querySelector('line:not([linetype="contur"])');
+
+	line.setAttributeNS(null, 'stroke', 'red');
+	line.setAttributeNS(null, 'stroke-width', '1');
+	
+}
+
+function DeSelectLine(figureGroup)
+{
+	if (figureGroup==null || figureGroup==undefined) return;
+	let line = figureGroup.querySelector('line:not([linetype="contur"])');
+
+	line.setAttributeNS(null, 'stroke', 'black');
+	line.setAttributeNS(null, 'stroke-width', '0.5');
+	
 }
 
 
