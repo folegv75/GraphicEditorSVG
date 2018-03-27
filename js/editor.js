@@ -296,26 +296,30 @@ function HolstMouseOver(E)
 function HolstKeyDown(E)
 {
 	//console.log(ShapeData.OperationMode);
-	//console.log(E.key);
+	console.log(E.key);
 	if (ShapeData.OperationMode == 'draw-figure-start' && E.key == 'Escape') 
 	{
 		CancelDrawFigure();
-	} else
-		if (ShapeData.OperationMode == 'select' && E.key == 'F2') 
+	} else if (ShapeData.OperationMode == 'select' && E.key == 'F2') 
+	{
+		ShapeData.OperationMode = 'rename-caption';
+		ShapeRenameCaptionStart(ShapeData.SelectedFigure);
+	} else if (ShapeData.OperationMode == 'rename-caption' && E.key == 'F2') 
+	{
+		ShapeData.OperationMode = 'select';
+		ShapeRenameCaptionApprove(ShapeData.SelectedFigure);
+	} else if (ShapeData.OperationMode == 'rename-caption' && E.key == 'Escape') 
+	{
+		ShapeData.OperationMode = 'select';
+		ShapeRenameCaptionCancel(ShapeData.SelectedFigure);
+	} else if (ShapeData.OperationMode == 'select' && E.key == 'Delete') 
+	{
+		if (ShapeData.SelectedFigure!=null)
 		{
-			ShapeData.OperationMode = 'rename-caption';
-			ShapeRenameCaptionStart(ShapeData.SelectedFigure);
-		} else
-			if (ShapeData.OperationMode == 'rename-caption' && E.key == 'F2') 
-			{
-				ShapeData.OperationMode = 'select';
-				ShapeRenameCaptionApprove(ShapeData.SelectedFigure);
-			} else
-				if (ShapeData.OperationMode == 'rename-caption' && E.key == 'Escape') 
-				{
-					ShapeData.OperationMode = 'select';
-					ShapeRenameCaptionCancel(ShapeData.SelectedFigure);
-				}
+			DeleteFigure(ShapeData.SelectedFigure);
+		}
+	}
+
 }
 
 // Обработка событий курсора
@@ -868,12 +872,6 @@ function ShapeMoveApproveLinkTip(linkline, tip)
 						
 	} else if (tip =='end')	
 	{
-		// let originX = +linkline.getAttributeNS(null, 'endx');
-		// let originY = +linkline.getAttributeNS(null, 'endy');
-		// let deltax = ShapeData.StartShapeX - originX;
-		// let deltay = ShapeData.StartShapeY - originY;
-		// line.setAttributeNS(null,'x2',ShapeData.EndShapeX - deltax);
-		// line.setAttributeNS(null,'y2',ShapeData.EndShapeY - deltay);
 
 		let originX = +linkline.getAttributeNS(null, 'endx');
 		let originY = +linkline.getAttributeNS(null, 'endy');
@@ -892,6 +890,15 @@ function ShapeMoveApproveLinkTip(linkline, tip)
 		linkline.setAttributeNS(null, 'endy', newy);
 		
 	}
+}
+
+
+function ClearLinkTip(figlink, tip)
+{
+	if (tip=='begin') figtag='figbegin';
+	else if (tip=='end') figtag='figend';
+	let elmtip = figlink.querySelector(figtag);
+	HolstRemoveShape(elmtip);
 }
 
 // Создает и добавляет на холст фигуру круг
@@ -1229,7 +1236,7 @@ function ShapeAddLine(x1, y1, x2, y2)
 	
 	groupShape.appendChild(shape);
 
-	HolstAppendShape(groupShape);
+	HolstInsertShape(groupShape);
 }
 
 // создает фигуру текст
@@ -1382,21 +1389,81 @@ function DeSelectLine(figureGroup)
 	
 }
 
+function DeleteFigure(figureGroup)
+{
+	if (figureGroup==null || figureGroup==undefined) return;
+	let figtype = figureGroup.getAttributeNS(null,'figuretype');
+	if (figtype==null) return;
+	result = confirm("Удалить выделенную фигуру?");
+	if (!result) return;
+	switch (figtype)
+	{
+		case 'rect':
+		{
+	 		DeleteRect(figureGroup)		
+			break
+		}
+		case 'line':
+		{
+			 DeleteLine(figureGroup);			
+			break
+		}
+	}
+	
+}
+
+// Удаляем фигуру и чисти концы связей
+function DeleteRect(figureGroup)
+{
+	if (figureGroup==null) return;
+	HolstRemoveShape(figureGroup);
+	let list = figureGroup.querySelectorAll("link");
+	for(let i=0; i<list.length; i++)
+	{
+		let link = list[i];
+		let linkid = link.getAttributeNS(null,'figid');
+		let tip = link.getAttributeNS(null,'tip');
+		let figlink = document.getElementById(linkid);
+		ClearLinkTip(figlink,tip);
+	}
+	
+}
+
+// Удаляем линии и чистим фигуры на концах от связи
+function DeleteLine(figureGroup)
+{
+	if (figureGroup==null) return;
+	let elem = document.getElementById('Holst');
+	
+	let list = elem.querySelectorAll("link[figid='"+ figureGroup.id+"']")
+	
+	for(let i=0; i<list.length; i++) HolstRemoveShape(list[i]);
+	HolstRemoveShape(figureGroup);
+
+}
+
 
 // Добавлет фигуру на холст
 function HolstAppendShape(shape)
 {
-	var elem;
+	let elem;
 	elem = document.getElementById('Holst');
 	elem.appendChild(shape);
+}
+
+// вставляет фигуру в начало (на задний фон)
+function HolstInsertShape(shape)
+{
+	let elem;
+	elem = document.getElementById('Holst');
+	if (elem.children.length==0) elem.appendChild(shape);
+	else elem.insertBefore(shape, elem.children[0]);
 }
 
 //удаляет фигуру с холста
 function HolstRemoveShape(shape)
 {
-	var elem;
-	elem = document.getElementById('Holst');
-	if (shape == null) return;
+	let elem=shape.parentElement;
 	elem.removeChild(shape);
 }
 
