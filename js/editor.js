@@ -6,7 +6,7 @@ var xmlns = "http://www.w3.org/2000/svg";
 // генератор уникальной строки
 function generateId()
 {
-	return 'id_'+Math.random().toString(36).substr(2, 11);
+	return 'id_' + Math.random().toString(36).substr(2, 11);
 }
 
 // генерация уникального значения. Еcли такое уже есть, генерируется следующее.
@@ -18,7 +18,7 @@ function genId()
 	{
 		xid = generateId();
 		elem = document.getElementById(xid);
-	} while (elem!=null);
+	} while (elem != null);
 	return xid;
 }
 
@@ -27,21 +27,21 @@ function FindFigureByXY(px, py)
 {
 	let elem = document.getElementById('Holst');
 	let list = elem.querySelectorAll('g[isfigure=true]');
-	for(let i=0; i<list.length; i++)
+	for (let i = 0; i < list.length; i++)
 	{
 		let fig = list[i];
-		let bx = +fig.getAttributeNS(null,'basex');
-		let by = +fig.getAttributeNS(null,'basey');
-		let bw = +fig.getAttributeNS(null,'basewidth');
-		let bh = +fig.getAttributeNS(null,'baseheight');
+		let bx = +fig.getAttributeNS(null, 'basex');
+		let by = +fig.getAttributeNS(null, 'basey');
+		let bw = +fig.getAttributeNS(null, 'basewidth');
+		let bh = +fig.getAttributeNS(null, 'baseheight');
 		let bx2 = bx + bw;
 		let by2 = by + bh;
-		if (px>=bx && px<=bx2 && py>=by && py<=by2) 
+		if (px >= bx && px <= bx2 && py >= by && py <= by2) 
 		{
 			return fig;
 		}
 	}
-	return null;	
+	return null;
 }
 
 function FileDragOver(event)
@@ -51,14 +51,14 @@ function FileDragOver(event)
 }
 function FileDrop() 
 { // отменяем действие по умолчанию 
-	event.preventDefault(); 
-	let i = 0, files = event.dataTransfer.files, len = files.length; 
+	event.preventDefault();
+	let i = 0, files = event.dataTransfer.files, len = files.length;
 	for (; i < len; i++) 
-	{ 
-		console.log("Filename: " + 
-		files[i].name); console.log("Type: " + files[i].type); 
-		console.log("Size: " + files[i].size + " bytes"); 
-	} 
+	{
+		console.log("Filename: " +
+			files[i].name); console.log("Type: " + files[i].type);
+		console.log("Size: " + files[i].size + " bytes");
+	}
 }
 
 function ReadShapeFromFile()
@@ -87,7 +87,7 @@ function OnFileRead(event)
 	var contents = event.target.result;
 
 	var elem = document.getElementById('Holst');
-	elem.innerHTML = contents;	
+	elem.innerHTML = contents;
 }
 
 function SaveShapeToFile()
@@ -157,9 +157,15 @@ function Init()
 	elmHolst.addEventListener('touchmove', HolstTouchMove, false);
 	elmHolst.addEventListener('touchend', HolstTouchEnd, false);
 	document.addEventListener('keydown', HolstKeyDown);
-
+	document.addEventListener('keydown', HolstKeyDown);
+	elmHolst.addEventListener('contextmenu', HolstContextMenu);
 	SelectClick();
 
+}
+
+function HolstContextMenu(E)
+{
+	E.preventDefault();
 }
 
 var CursorEvent = {};
@@ -314,7 +320,7 @@ function HolstKeyDown(E)
 		ShapeRenameCaptionCancel(ShapeData.SelectedFigure);
 	} else if (ShapeData.OperationMode == 'select' && E.key == 'Delete') 
 	{
-		if (ShapeData.SelectedFigure!=null)
+		if (ShapeData.SelectedFigure != null)
 		{
 			DeleteFigure(ShapeData.SelectedFigure);
 		}
@@ -453,7 +459,7 @@ function CursorDown(E)
 
 	}
 
-	if (ShapeData.OperationMode == 'draw-figure' || ShapeData.OperationMode == 'draw-line') 
+	if ((ShapeData.OperationMode == 'draw-figure' || ShapeData.OperationMode == 'draw-line') && E.SourceEvent.which == 1)
 	{
 		ShapeData.StartShapeX = mouseCoord.offsetX;
 		ShapeData.StartShapeY = mouseCoord.offsetY;
@@ -463,29 +469,48 @@ function CursorDown(E)
 		CalculateFigureBounds();
 		DrawFigureContour();
 	}
-	else
-		if (ShapeData.OperationMode == 'select') 
+	else if (ShapeData.OperationMode == 'select' && E.SourceEvent.which == 1) 
+	{
+		// если выбрали фигуру
+		if (ShapeData.FigureGroup != null) 
 		{
-			// если выбрали фигуру
-			if (ShapeData.FigureGroup != null) 
+			DeselectFigure(ShapeData.SelectedFigure);
+			figureType = ShapeData.FigureGroup.getAttributeNS(null, 'figuretype');
+			ShapeData.SelectedFigure = figureGroup;
+			if (figureType == 'rect') 
 			{
-				DeselectFigure(ShapeData.SelectedFigure);
-				figureType = ShapeData.FigureGroup.getAttributeNS(null, 'figuretype');
-				ShapeData.SelectedFigure = figureGroup;
-				if (figureType == 'rect') 
-				{
-					ShapeData.OperationMode = 'select-figure-start';
-					currFigureX = +ShapeData.SelectedFigure.getAttributeNS(null, 'basex');
-					currFigureY = +ShapeData.SelectedFigure.getAttributeNS(null, 'basey');
-					ShapeData.DeltaFigureX = mouseCoord.offsetX - currFigureX;
-					ShapeData.DeltaFigureY = mouseCoord.offsetY - currFigureY;
-					ShapeData.StartShapeX = mouseCoord.offsetX;
-					ShapeData.StartShapeY = mouseCoord.offsetY;
-				}
-				SelectFigure(ShapeData.SelectedFigure);
+				ShapeData.OperationMode = 'select-figure-start';
+				currFigureX = +ShapeData.SelectedFigure.getAttributeNS(null, 'basex');
+				currFigureY = +ShapeData.SelectedFigure.getAttributeNS(null, 'basey');
+				ShapeData.DeltaFigureX = mouseCoord.offsetX - currFigureX;
+				ShapeData.DeltaFigureY = mouseCoord.offsetY - currFigureY;
+				ShapeData.StartShapeX = mouseCoord.offsetX;
+				ShapeData.StartShapeY = mouseCoord.offsetY;
 			}
-
+			SelectFigure(ShapeData.SelectedFigure);
 		}
+
+	}
+	else if (ShapeData.OperationMode == 'select' && E.SourceEvent.which == 3)
+	{
+		if (ShapeData.FigureGroup != null) 
+		{
+			DeselectFigure(ShapeData.SelectedFigure);
+			figureType = ShapeData.FigureGroup.getAttributeNS(null, 'figuretype');
+			ShapeData.SelectedFigure = figureGroup;
+			if (figureType == 'rect') 
+			{
+				ShapeData.OperationMode = 'resize-figure-start';
+				currFigureX = +ShapeData.SelectedFigure.getAttributeNS(null, 'basex');
+				currFigureY = +ShapeData.SelectedFigure.getAttributeNS(null, 'basey');
+				ShapeData.DeltaFigureX = mouseCoord.offsetX - currFigureX;
+				ShapeData.DeltaFigureY = mouseCoord.offsetY - currFigureY;
+				ShapeData.StartShapeX = mouseCoord.offsetX;
+				ShapeData.StartShapeY = mouseCoord.offsetY;
+			}
+			SelectFigure(ShapeData.SelectedFigure);
+		}
+	}
 }
 
 function CursorMove(E)
@@ -496,22 +521,31 @@ function CursorMove(E)
 		ShapeData.EndShapeY = E.OffsetY;
 		CalculateFigureBounds();
 		DrawFigureContour();
-	} else
-		if (ShapeData.OperationMode == 'select-figure-start' || ShapeData.OperationMode == 'move-figure')
-		{
-			ShapeData.OperationMode = 'move-figure';
-			ShapeData.EndShapeX = E.OffsetX;
-			ShapeData.EndShapeY = E.OffsetY;
+	} else if (ShapeData.OperationMode == 'select-figure-start' || ShapeData.OperationMode == 'move-figure')
+	{
+		ShapeData.OperationMode = 'move-figure';
+		ShapeData.EndShapeX = E.OffsetX;
+		ShapeData.EndShapeY = E.OffsetY;
+		
+		MoveFigure();
+	} else if (ShapeData.OperationMode == 'resize-figure-start' || ShapeData.OperationMode == 'resize-figure')
+	{
+		ShapeData.OperationMode = 'resize-figure';
+		ShapeData.EndShapeX = E.OffsetX;
+		ShapeData.EndShapeY = E.OffsetY;
 
-			MoveFigure();
-		}
+		ShapeData.EndShapeX = E.OffsetX;
+		ShapeData.EndShapeY = E.OffsetY;
+		CalculateFigureBounds();
+		DrawFigureContour('rectangle',0.3);
+
+	}
 
 }
 
-
 function CursorUp(E)
 {
-	
+
 	let figup = null;
 	let figureGroup = null;
 	if (E.Target.id == 'Holst') 
@@ -520,8 +554,8 @@ function CursorUp(E)
 	} else 
 	{
 		// нажали на фигуру
-		figup = FindFigureByXY(ShapeData.EndShapeX,ShapeData.EndShapeY);
-		
+		figup = FindFigureByXY(ShapeData.EndShapeX, ShapeData.EndShapeY);
+
 		let list = E.SourceEvent.path;
 		for (let i = 0; i < list.length; i++)
 		{
@@ -539,11 +573,11 @@ function CursorUp(E)
 		}
 	}
 
-		// на какой фигуре нажали курсор
-		ShapeData.FigureCursorUp = figup;
+	// на какой фигуре нажали курсор
+	ShapeData.FigureCursorUp = figup;
 	//console.log('figdown', ShapeData.FigureCursorDown);
 	//console.log('figup', ShapeData.FigureCursorUp);
-	
+
 	if (ShapeData.OperationMode == 'draw-figure-start') 
 	{
 		ShapeData.OperationMode = 'draw-figure-stop';
@@ -553,10 +587,18 @@ function CursorUp(E)
 		DestroyFigureContour();
 		CreateFigureOnHolst();
 		ShapeData.OperationMode = 'draw-figure';
-	} else	if (ShapeData.OperationMode == 'move-figure')
+	} else if (ShapeData.OperationMode == 'move-figure')
 	{
-			MoveFigureApprove();			
-			ShapeData.OperationMode = 'select';
+		MoveFigureApprove();
+		ShapeData.OperationMode = 'select';
+	}
+	else if (ShapeData.OperationMode == 'resize-figure')
+	{
+		CalculateFigureBounds();
+		DestroyFigureContour();
+		ResizeFigureApprove();
+		ShapeData.OperationMode = 'select';
+
 	}
 	else if (ShapeData.OperationMode == 'select-figure-start') 
 	{
@@ -623,11 +665,14 @@ function CancelDrawFigure()
 	DestroyFigureContour();
 }
 
-function DrawFigureContour()
+function DrawFigureContour(pfig,op)
 {
+	if (op == undefined) op = 1;
+	let lfig = pfig;
+	if (lfig==undefined) lfig = ShapeData.currShape;
 	if (ShapeData.CurrentFigureCountur == null) 
 	{
-		switch (ShapeData.currShape)
+		switch (lfig)
 		{
 			case 'rectangle':
 				ShapeData.CurrentFigureCountur = CreateFigureConturRectangle(ShapeData.BoundsLeft, ShapeData.BoundsTop, ShapeData.Width, ShapeData.Height);
@@ -639,13 +684,15 @@ function DrawFigureContour()
 
 	} else
 	{
-		switch (ShapeData.currShape)
+		switch (lfig)
 		{
 			case 'rectangle':
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'x', ShapeData.BoundsLeft);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'y', ShapeData.BoundsTop);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'width', ShapeData.Width);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'height', ShapeData.Height);
+				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'height', ShapeData.Height);
+				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'fill', 'rgba(255,255,255,' +op+')');
 				break;
 			case 'line':
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'x2', ShapeData.EndShapeX);
@@ -719,29 +766,42 @@ function MoveFigure()
 		ShapeMoveRectangle(shape, newX, newY);
 
 		shape.setAttributeNS(null, 'x', newX);
-		shape.setAttributeNS(null, 'y', newY);				
+		shape.setAttributeNS(null, 'y', newY);
 
 	}
 	else
 		if (figuretype == 'line') 
 		{
 		}
-	else
-		if (figuretype == 'circle') 
-		{
-			cx = shape.getAttributeNS(null, 'cx');
-			cy = shape.getAttributeNS(null, 'cy');
-			shape.setAttributeNS(null, 'cx', E.offsetX);
-			shape.setAttributeNS(null, 'cy', E.offsetY);
-		}
+		else
+			if (figuretype == 'circle') 
+			{
+				cx = shape.getAttributeNS(null, 'cx');
+				cy = shape.getAttributeNS(null, 'cy');
+				shape.setAttributeNS(null, 'cx', E.offsetX);
+				shape.setAttributeNS(null, 'cy', E.offsetY);
+			}
 	let list = shape.querySelectorAll('link');
-	for (let i=0; i<list.length; i++)
+	for (let i = 0; i < list.length; i++)
 	{
 		let elm = list[i];
 		let linkline = document.getElementById(elm.getAttributeNS(null, 'figid'));
-		ShapeMoveLinkTip(linkline, elm.getAttributeNS(null,'tip'));
+		ShapeMoveLinkTip(linkline, elm.getAttributeNS(null, 'tip'));
 	}
-	
+
+}
+
+function ResizeFigure()
+{
+	if (ShapeData.SelectedFigure == null) return;
+
+}
+
+function ResizeFigureApprove()
+{
+	if (ShapeData.SelectedFigure == null) return;
+	shape = ShapeData.SelectedFigure;
+
 }
 
 function MoveFigureApprove()
@@ -764,44 +824,44 @@ function MoveFigureApprove()
 		ShapeMoveRectangle(shape, newX, newY);
 
 		shape.setAttributeNS(null, 'x', newX);
-		shape.setAttributeNS(null, 'y', newY);				
+		shape.setAttributeNS(null, 'y', newY);
 
 	}
 	else
 		if (figuretype == 'line') 
 		{
 		}
-	else
-		if (figuretype == 'circle') 
-		{
-			cx = shape.getAttributeNS(null, 'cx');
-			cy = shape.getAttributeNS(null, 'cy');
-			shape.setAttributeNS(null, 'cx', E.offsetX);
-			shape.setAttributeNS(null, 'cy', E.offsetY);
-		}
+		else
+			if (figuretype == 'circle') 
+			{
+				cx = shape.getAttributeNS(null, 'cx');
+				cy = shape.getAttributeNS(null, 'cy');
+				shape.setAttributeNS(null, 'cx', E.offsetX);
+				shape.setAttributeNS(null, 'cy', E.offsetY);
+			}
 	let list = shape.querySelectorAll('link');
-	for (let i=0; i<list.length; i++)
+	for (let i = 0; i < list.length; i++)
 	{
 		let elm = list[i];
 		let linkline = document.getElementById(elm.getAttributeNS(null, 'figid'));
-		ShapeMoveApproveLinkTip(linkline, elm.getAttributeNS(null,'tip'));
+		ShapeMoveApproveLinkTip(linkline, elm.getAttributeNS(null, 'tip'));
 	}
-	
+
 }
-	
+
 
 
 // передвинуть конец линии
 function ShapeMoveLinkTip(linkline, tip)
 {
-	if (linkline==null) return;
+	if (linkline == null) return;
 	let line = linkline.querySelector('line:not([linetype])');
-	if (line==null) return;
+	if (line == null) return;
 	let linecontur = linkline.querySelector('line[linetype=contur]');
 
 
 
-	if (tip=='begin') 
+	if (tip == 'begin') 
 	{
 
 		// ------------------
@@ -811,17 +871,17 @@ function ShapeMoveLinkTip(linkline, tip)
 		let deltay = ShapeData.StartShapeY - originY;
 		let newx = ShapeData.EndShapeX - deltax;
 		let newy = ShapeData.EndShapeY - deltay;
-	
-		line.setAttributeNS(null,'x1',newx);
-		line.setAttributeNS(null,'y1',newy);
-		linecontur.setAttributeNS(null,'x1',newx);
-		linecontur.setAttributeNS(null,'y1',newy);
+
+		line.setAttributeNS(null, 'x1', newx);
+		line.setAttributeNS(null, 'y1', newy);
+		linecontur.setAttributeNS(null, 'x1', newx);
+		linecontur.setAttributeNS(null, 'y1', newy);
 
 		// это надо сделать после окончания перемещения
 		//linkline.setAttributeNS(null, 'basex', newx);
 		//linkline.setAttributeNS(null, 'basey', newy);
-						
-	} else if (tip =='end')
+
+	} else if (tip == 'end')
 	{
 		let originX = +linkline.getAttributeNS(null, 'endx');
 		let originY = +linkline.getAttributeNS(null, 'endy');
@@ -829,28 +889,28 @@ function ShapeMoveLinkTip(linkline, tip)
 		let deltay = ShapeData.StartShapeY - originY;
 		let newx = ShapeData.EndShapeX - deltax;
 		let newy = ShapeData.EndShapeY - deltay;
-	
-		line.setAttributeNS(null,'x2',newx);
-		line.setAttributeNS(null,'y2',newy);
-		linecontur.setAttributeNS(null,'x2',newx);
-		linecontur.setAttributeNS(null,'y2',newy);
+
+		line.setAttributeNS(null, 'x2', newx);
+		line.setAttributeNS(null, 'y2', newy);
+		linecontur.setAttributeNS(null, 'x2', newx);
+		linecontur.setAttributeNS(null, 'y2', newy);
 
 		// это надо сделать после окончания перемещения
 		//linkline.setAttributeNS(null, 'endx', newx);
 		//linkline.setAttributeNS(null, 'endy', newy);
-		
+
 	}
 }
 
 // передвинуть конец линии
 function ShapeMoveApproveLinkTip(linkline, tip)
 {
-	if (linkline==null) return;
+	if (linkline == null) return;
 	let line = linkline.querySelector('line:not([linetype])');
-	if (line==null) return;
+	if (line == null) return;
 	let linecontur = linkline.querySelector('line[linetype=contur]');
 
-	if (tip=='begin') 
+	if (tip == 'begin') 
 	{
 
 		// ------------------
@@ -860,17 +920,17 @@ function ShapeMoveApproveLinkTip(linkline, tip)
 		let deltay = ShapeData.StartShapeY - originY;
 		let newx = ShapeData.EndShapeX - deltax;
 		let newy = ShapeData.EndShapeY - deltay;
-	
-		line.setAttributeNS(null,'x1',newx);
-		line.setAttributeNS(null,'y1',newy);
-		linecontur.setAttributeNS(null,'x1',newx);
-		linecontur.setAttributeNS(null,'y1',newy);
+
+		line.setAttributeNS(null, 'x1', newx);
+		line.setAttributeNS(null, 'y1', newy);
+		linecontur.setAttributeNS(null, 'x1', newx);
+		linecontur.setAttributeNS(null, 'y1', newy);
 
 		// это надо сделать после окончания перемещения
 		linkline.setAttributeNS(null, 'basex', newx);
 		linkline.setAttributeNS(null, 'basey', newy);
-						
-	} else if (tip =='end')	
+
+	} else if (tip == 'end')	
 	{
 
 		let originX = +linkline.getAttributeNS(null, 'endx');
@@ -879,24 +939,24 @@ function ShapeMoveApproveLinkTip(linkline, tip)
 		let deltay = ShapeData.StartShapeY - originY;
 		let newx = ShapeData.EndShapeX - deltax;
 		let newy = ShapeData.EndShapeY - deltay;
-	
-		line.setAttributeNS(null,'x2',newx);
-		line.setAttributeNS(null,'y2',newy);
-		linecontur.setAttributeNS(null,'x2',newx);
-		linecontur.setAttributeNS(null,'y2',newy);
+
+		line.setAttributeNS(null, 'x2', newx);
+		line.setAttributeNS(null, 'y2', newy);
+		linecontur.setAttributeNS(null, 'x2', newx);
+		linecontur.setAttributeNS(null, 'y2', newy);
 
 		// это надо сделать после окончания перемещения
 		linkline.setAttributeNS(null, 'endx', newx);
 		linkline.setAttributeNS(null, 'endy', newy);
-		
+
 	}
 }
 
 
 function ClearLinkTip(figlink, tip)
 {
-	if (tip=='begin') figtag='figbegin';
-	else if (tip=='end') figtag='figend';
+	if (tip == 'begin') figtag = 'figbegin';
+	else if (tip == 'end') figtag = 'figend';
 	let elmtip = figlink.querySelector(figtag);
 	HolstRemoveShape(elmtip);
 }
@@ -1160,9 +1220,9 @@ function ShapeMoveRectangle(groupshape, x, y)
 			tmpShape.setAttributeNS(null, 'x', newx);
 			tmpShape.setAttributeNS(null, 'y', newy);
 		} else
-		if (tmpShape.tagName == 'link')
-		{
-		}
+			if (tmpShape.tagName == 'link')
+			{
+			}
 
 	}
 
@@ -1174,11 +1234,11 @@ function ShapeAddLine(x1, y1, x2, y2)
 
 	let basex = x1;
 	let basey = y1;
-	let basewidth = x2-x1;
-	let baseheight = y2-y1;
+	let basewidth = x2 - x1;
+	let baseheight = y2 - y1;
 	let groupShape = document.createElementNS(xmlns, 'g');
-	groupShape.id= genId();
-	
+	groupShape.id = genId();
+
 	groupShape.setAttributeNS(null, 'isfigure', true);
 	groupShape.setAttributeNS(null, 'basex', basex);
 	groupShape.setAttributeNS(null, 'basey', basey);
@@ -1187,26 +1247,26 @@ function ShapeAddLine(x1, y1, x2, y2)
 	groupShape.setAttributeNS(null, 'basewidth', basewidth);
 	groupShape.setAttributeNS(null, 'baseheight', baseheight);
 	groupShape.setAttributeNS(null, 'figuretype', 'line');
-	
+
 	if (ShapeData.FigureCursorDown != null) 
 	{
 		let figbegin = document.createElement('FigBegin');
-		figbegin.setAttributeNS(null,'figid',ShapeData.FigureCursorDown.id);
+		figbegin.setAttributeNS(null, 'figid', ShapeData.FigureCursorDown.id);
 		groupShape.appendChild(figbegin);
 		let elmlink = document.createElement('link');
-		elmlink.setAttributeNS(null,'figid',groupShape.id);
-		elmlink.setAttributeNS(null,'tip','begin');
+		elmlink.setAttributeNS(null, 'figid', groupShape.id);
+		elmlink.setAttributeNS(null, 'tip', 'begin');
 		ShapeData.FigureCursorDown.appendChild(elmlink);
 	}
-	
+
 	if (ShapeData.FigureCursorUp != null)
 	{
 		let figend = document.createElement('FigEnd');
-		figend.setAttributeNS(null,'figid',ShapeData.FigureCursorUp.id);
+		figend.setAttributeNS(null, 'figid', ShapeData.FigureCursorUp.id);
 		groupShape.appendChild(figend);
 		let elmlink = document.createElement('link');
-		elmlink.setAttributeNS(null,'figid',groupShape.id);
-		elmlink.setAttributeNS(null,'tip','end');
+		elmlink.setAttributeNS(null, 'figid', groupShape.id);
+		elmlink.setAttributeNS(null, 'tip', 'end');
 		ShapeData.FigureCursorUp.appendChild(elmlink);
 	}
 
@@ -1233,7 +1293,7 @@ function ShapeAddLine(x1, y1, x2, y2)
 	shape.setAttributeNS(null, 'y2', y2);
 	shape.setAttributeNS(null, 'stroke', 'black');
 	shape.setAttributeNS(null, 'stroke-width', '0.5');
-	
+
 	groupShape.appendChild(shape);
 
 	HolstInsertShape(groupShape);
@@ -1312,50 +1372,50 @@ function ShapeRenameCaptionCancel(fig)
 
 function DeselectFigure(figureGroup)
 {
-	console.log('deselect:',figureGroup);
-	if (figureGroup==null || figureGroup==undefined) return;
+	console.log('deselect:', figureGroup);
+	if (figureGroup == null || figureGroup == undefined) return;
 	let figtype = figureGroup.getAttributeNS(null, 'figuretype');
-	if (figtype==null) return;
+	if (figtype == null) return;
 	switch (figtype)
 	{
 		case 'rect':
-		{
-			DeSelectRect(figureGroup)		
-			break
-		}
+			{
+				DeSelectRect(figureGroup)
+				break
+			}
 		case 'line':
-		{
-			DeSelectLine(figureGroup)		
-			break
-		}
+			{
+				DeSelectLine(figureGroup)
+				break
+			}
 	}
 
 }
 
 function SelectFigure(figureGroup)
 {
-	console.log('select:',figureGroup);
-	if (figureGroup==null || figureGroup==undefined) return;
-	let figtype = figureGroup.getAttributeNS(null,'figuretype');
-	if (figtype==null) return;
+	console.log('select:', figureGroup);
+	if (figureGroup == null || figureGroup == undefined) return;
+	let figtype = figureGroup.getAttributeNS(null, 'figuretype');
+	if (figtype == null) return;
 	switch (figtype)
 	{
 		case 'rect':
-		{
-	 		SelectRect(figureGroup)		
-			break
-		}
+			{
+				SelectRect(figureGroup)
+				break
+			}
 		case 'line':
-		{
-			 SelectLine(figureGroup);			
-			break
-		}
+			{
+				SelectLine(figureGroup);
+				break
+			}
 	}
 }
 
 function SelectRect(figureGroup)
 {
-	if (figureGroup==null || figureGroup==undefined) return;
+	if (figureGroup == null || figureGroup == undefined) return;
 	let rect = figureGroup.querySelector('rect');
 	rect.setAttributeNS(null, 'stroke', 'red');
 	rect.setAttributeNS(null, 'stroke-width', '2');
@@ -1363,81 +1423,81 @@ function SelectRect(figureGroup)
 
 function DeSelectRect(figureGroup)
 {
-	if (figureGroup==null || figureGroup==undefined) return;
+	if (figureGroup == null || figureGroup == undefined) return;
 	let rect = figureGroup.querySelector('rect');
 	rect.setAttributeNS(null, 'stroke', 'black');
-	rect.setAttributeNS(null, 'stroke-width', '1');	
+	rect.setAttributeNS(null, 'stroke-width', '1');
 }
 
 function SelectLine(figureGroup)
 {
-	if (figureGroup==null || figureGroup==undefined) return;
+	if (figureGroup == null || figureGroup == undefined) return;
 	let line = figureGroup.querySelector('line:not([linetype="contur"])');
 
 	line.setAttributeNS(null, 'stroke', 'red');
 	line.setAttributeNS(null, 'stroke-width', '1');
-	
+
 }
 
 function DeSelectLine(figureGroup)
 {
-	if (figureGroup==null || figureGroup==undefined) return;
+	if (figureGroup == null || figureGroup == undefined) return;
 	let line = figureGroup.querySelector('line:not([linetype="contur"])');
 
 	line.setAttributeNS(null, 'stroke', 'black');
 	line.setAttributeNS(null, 'stroke-width', '0.5');
-	
+
 }
 
 function DeleteFigure(figureGroup)
 {
-	if (figureGroup==null || figureGroup==undefined) return;
-	let figtype = figureGroup.getAttributeNS(null,'figuretype');
-	if (figtype==null) return;
+	if (figureGroup == null || figureGroup == undefined) return;
+	let figtype = figureGroup.getAttributeNS(null, 'figuretype');
+	if (figtype == null) return;
 	result = confirm("Удалить выделенную фигуру?");
 	if (!result) return;
 	switch (figtype)
 	{
 		case 'rect':
-		{
-	 		DeleteRect(figureGroup)		
-			break
-		}
+			{
+				DeleteRect(figureGroup)
+				break
+			}
 		case 'line':
-		{
-			 DeleteLine(figureGroup);			
-			break
-		}
+			{
+				DeleteLine(figureGroup);
+				break
+			}
 	}
-	
+
 }
 
 // Удаляем фигуру и чисти концы связей
 function DeleteRect(figureGroup)
 {
-	if (figureGroup==null) return;
+	if (figureGroup == null) return;
 	HolstRemoveShape(figureGroup);
 	let list = figureGroup.querySelectorAll("link");
-	for(let i=0; i<list.length; i++)
+	for (let i = 0; i < list.length; i++)
 	{
 		let link = list[i];
-		let linkid = link.getAttributeNS(null,'figid');
-		let tip = link.getAttributeNS(null,'tip');
+		let linkid = link.getAttributeNS(null, 'figid');
+		let tip = link.getAttributeNS(null, 'tip');
 		let figlink = document.getElementById(linkid);
-		ClearLinkTip(figlink,tip);
+		ClearLinkTip(figlink, tip);
 	}
-	
+
 }
 
 // Удаляем линии и чистим фигуры на концах от связи
 function DeleteLine(figureGroup)
 {
-	if (figureGroup==null) return;
+	if (figureGroup == null) return;
 	let elem = document.getElementById('Holst');
-	
-	let list = elem.querySelectorAll("link[figid='"+ figureGroup.id+"']")
-	
-	for(let i=0; i<list.length; i++) HolstRemoveShape(list[i]);
+
+	let list = elem.querySelectorAll("link[figid='" + figureGroup.id + "']")
+
+	for (let i = 0; i < list.length; i++) HolstRemoveShape(list[i]);
 	HolstRemoveShape(figureGroup);
 
 }
@@ -1456,14 +1516,14 @@ function HolstInsertShape(shape)
 {
 	let elem;
 	elem = document.getElementById('Holst');
-	if (elem.children.length==0) elem.appendChild(shape);
+	if (elem.children.length == 0) elem.appendChild(shape);
 	else elem.insertBefore(shape, elem.children[0]);
 }
 
 //удаляет фигуру с холста
 function HolstRemoveShape(shape)
 {
-	let elem=shape.parentElement;
+	let elem = shape.parentElement;
 	elem.removeChild(shape);
 }
 
