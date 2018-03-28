@@ -710,11 +710,11 @@ function MoveFigure()
 		newX = ShapeData.EndShapeX - ShapeData.DeltaFigureX;
 		newY = ShapeData.EndShapeY - ShapeData.DeltaFigureY;
 
-		if (newX < 0) newX = 0;
-		if (newY < 0) newY = 0;
+		if (newX <= 0) newX = 1;
+		if (newY <= 0) newY = 1;
 
-		if (newX > 1000) newX = 1000;
-		if (newY > 1000) newY = 1000;
+		if (newX > 1500) newX = 1500;
+		if (newY > 1500) newY = 1500;
 
 		ShapeMoveRectangle(shape, newX, newY);
 
@@ -755,11 +755,11 @@ function MoveFigureApprove()
 		newX = ShapeData.EndShapeX - ShapeData.DeltaFigureX;
 		newY = ShapeData.EndShapeY - ShapeData.DeltaFigureY;
 
-		if (newX < 0) newX = 0;
-		if (newY < 0) newY = 0;
+		if (newX < 1) newX = 1;
+		if (newY < 1) newY = 1;
 
-		if (newX > 1000) newX = 1000;
-		if (newY > 1000) newY = 1000;
+		if (newX > 1500) newX = 1500;
+		if (newY > 1500) newY = 1500;
 
 		ShapeMoveRectangle(shape, newX, newY);
 
