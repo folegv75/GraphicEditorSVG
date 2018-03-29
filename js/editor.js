@@ -55,9 +55,9 @@ function FileDrop()
 	let i = 0, files = event.dataTransfer.files, len = files.length;
 	for (; i < len; i++) 
 	{
-		console.log("Filename: " +
-			files[i].name); console.log("Type: " + files[i].type);
-		console.log("Size: " + files[i].size + " bytes");
+		let reader = new FileReader();
+		reader.onload = OnFileRead;
+		reader.readAsText(files[i]);		
 	}
 }
 
@@ -71,15 +71,14 @@ function ReadShapeFromFile()
 
 	for (; i < len; i++)
 	{
-		console.log("Filename: " + files[i].name);
-		console.log("Type: " + files[i].type);
-		console.log("Size: " + files[i].size + " bytes");
+		//console.log("Filename: " + files[i].name);
+		//console.log("Type: " + files[i].type);
+		//console.log("Size: " + files[i].size + " bytes");
 
-		var reader = new FileReader();
+		let reader = new FileReader();
 		reader.onload = OnFileRead;
 		reader.readAsText(files[i]);
 	}
-
 }
 
 function OnFileRead(event)
@@ -102,16 +101,14 @@ function SaveShapeToFile()
 	// приницип работы: сделать из blob URL объекта, сгненировать html <a> и 
 	// присвоить ссылку на URL, затем сгенерировать события нажатия на эту ссылку
 	// произодет скачивание файла по ссылке, но не с сервера, а с blob конвертированного в ссылку
-
 	saveAs(bb, 'save.svg');
-
 }
 
 function Init()
 {
 	// глообальные элементы
 	elt = document.getElementById('info');
-	elmDebugInfo = document.getElementById('debug-info');
+	elmDebugInfo = document.getElementById('add-debug-info');
 	elmXValue = document.getElementById('xvalue');
 	elmEValue = document.getElementById('yvalue');
 	elmHolst = document.getElementById('Holst');
@@ -140,11 +137,11 @@ function Init()
 	elem = document.getElementById('btnRectangle');
 	elem.addEventListener('click', RectangleClick);
 
-	elem = document.getElementById('btnCircle');
-	elem.addEventListener('click', CircleClick);
+	//elem = document.getElementById('btnCircle');
+	//elem.addEventListener('click', CircleClick);
 
-	elem = document.getElementById('btnText');
-	elem.addEventListener('click', TextClick);
+	//elem = document.getElementById('btnText');
+	//elem.addEventListener('click', TextClick);
 
 	elem = document.getElementById('btnLine');
 	elem.addEventListener('click', LineClick);
@@ -161,6 +158,16 @@ function Init()
 	elmHolst.addEventListener('contextmenu', HolstContextMenu);
 	SelectClick();
 
+	window.onbeforeunload = WindowExit;
+
+}
+
+function WindowExit(E)
+{
+	let elm = document.getElementById('info');
+	let confirmMsg = "Возможно данные не сохранены. Вы уверены, что хотите выйти из приложения?"
+	//elm.innerHTML = confirmMsg;
+	return confirmMsg;
 }
 
 function HolstContextMenu(E)
@@ -396,10 +403,11 @@ function LineClick()
 // переключить выделение текущей кнопки фигуры
 function ToggleMenuButton(id)
 {
-	var elem;
+	let elem;
 	elem = document.querySelector('.currentbtn');
 	if (elem != null) elem.classList.remove('currentbtn');
-	elem = document.getElementById(id);
+//	elem = document.getElementById(id);
+	elem = document.querySelector("label[for="+id+"]");
 	elem.classList.add('currentbtn');
 }
 
@@ -691,7 +699,6 @@ function DrawFigureContour(pfig,op)
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'y', ShapeData.BoundsTop);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'width', ShapeData.Width);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'height', ShapeData.Height);
-				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'height', ShapeData.Height);
 				ShapeData.CurrentFigureCountur.setAttributeNS(null, 'fill', 'rgba(255,255,255,' +op+')');
 				break;
 			case 'line':
@@ -791,17 +798,15 @@ function MoveFigure()
 
 }
 
-function ResizeFigure()
-{
-	if (ShapeData.SelectedFigure == null) return;
-
-}
-
 function ResizeFigureApprove()
 {
 	if (ShapeData.SelectedFigure == null) return;
-	shape = ShapeData.SelectedFigure;
-
+	let shape = ShapeData.SelectedFigure;
+	figuretype = shape.getAttributeNS(null, 'figuretype');
+	if (figuretype == 'rect')
+	{
+		ShapeResizeRectangle(shape, ShapeData.Width, ShapeData.Height);
+	}
 }
 
 function MoveFigureApprove()
@@ -1219,13 +1224,27 @@ function ShapeMoveRectangle(groupshape, x, y)
 
 			tmpShape.setAttributeNS(null, 'x', newx);
 			tmpShape.setAttributeNS(null, 'y', newy);
-		} else
-			if (tmpShape.tagName == 'link')
-			{
-			}
-
+		} else if (tmpShape.tagName == 'link')
+		{
+		}
 	}
+}
 
+// Устанавливает новую ширину и высоту
+function ShapeResizeRectangle(groupshape, newWidth, newHeight)
+{
+	// изменение размера базовой фигуры
+	groupshape.setAttributeNS(null, 'basewidth', newWidth);
+	groupshape.setAttributeNS(null, 'baseheight', newHeight);
+
+	// изменение размера прямоугольника
+	let shape;
+	shape = groupshape.querySelector('rect');
+	shape.setAttributeNS(null, 'width', newWidth);
+	shape.setAttributeNS(null, 'height', newHeight);
+	
+	// пересчет заголовка
+	ShapeRectSetCaption(groupshape,ShapeRectGetCaption(groupshape));
 }
 
 // Создает фигуру линия

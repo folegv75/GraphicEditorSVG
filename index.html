@@ -12,35 +12,47 @@
 </head>
 
 <body>
-	<input type="file" id="your-files" multiple>
-	<div id="your-files-drag">Перетащите сюда файл</div>
-	<div id="your-files-save">Сохранить файл</div>
-	<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Детальное описание тега SVG</a>
-	<div class='debug-info' id='debug-info'></div>
-	<div class='main-window'>
+	<div class='debug-info' id='debug-info'>
+			<span style='width:15px' class='label info-label'>X=</span>
+			<span style='width:30px' class='intvalue info-label' id='xvalue'></span>
+			<span style='width:15px' class='label info-label'>Y=</span>
+			<span style='width:30px' class='intvalue info-label' id='yvalue'></span>
+			<span style='width:200px' class='intvalue info-label' id='add-debug-info'></span>
+	</div>
+<div class='main-window'>
 		<div class='menu border'>
 			<div>
-				<input type="button" value='Выбор' class='menu-button currentbtn' id='btnSelect' />
+					<label for="btnSelect" class="menu-button aBtn">Выбор</label>
+				<input type="button"  id='btnSelect' hidden>
 			</div>
 			<div>
-				<input type="button" value='Прямоугольник' class='menu-button' id='btnRectangle' />
+					<label for="btnRectangle" class="menu-button aBtn">Прямоугольник</label>
+				<input type="button"  id='btnRectangle' hidden>
 			</div>
+		<!--		
 			<div>
 				<input type="button" value='Круг' class='menu-button' id='btnCircle' />
 			</div>
 			<div>
 				<input type="button" value='Текст' class='menu-button' id='btnText' />
 			</div>
+		-->
 			<div>
-				<input type="button" value='Линия' class='menu-button' id='btnLine' />
+					<label for="btnLine" class="menu-button aBtn">Линия</label>
+					<input type="button" id='btnLine' hidden>
 			</div>
 			<div>
-				<span class='label'>X=</span>
-				<span class='intvalue' id='xvalue'></span>
+					<label for="your-files-save" class="menu-button aBtn">Сохранить файл</label>
+					<input type="button" id="your-files-save" hidden/>
 			</div>
 			<div>
-				<span class='label'>Y=</span>
-				<span class='intvalue' id='yvalue'></span>
+					<label for="your-files" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
+					<input type="file" name="upload" id="your-files" hidden>
+			</div>
+
+
+			<div>
+				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Спецификация SVG</a>
 			</div>
 			<div id='info'></div>
 		</div>

@@ -2,14 +2,41 @@
 
 body {
 	font-family: "Noto Sans", sans-serif;
+	font-size: 10pt;
 }
 
 input {
 	font-family: "Noto Sans", sans-serif;
+	font-size: 10pt;
+    padding: 0px; /* Скиним поля у кнопок. Управлять ими будем сами, так как оформление свое */
 }
 
+label {
+	font-family: "Noto Sans", sans-serif;
+	font-size: 10pt;
+}
+
+.aBtn {
+    border: 1px solid #333; /* Рамка */
+    display: inline-block;
+    padding: 5px; /* Поля */
+    text-decoration: none; /* Убираем подчёркивание */
+	color: #000; /* Цвет текста */
+    background: rgb(221,221,221); /* Градиент */
+	width: 160px;
+	cursor: pointer;
+	text-align: center;
+  }
+   .aBtn:hover {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Тень */
+    background: linear-gradient(to bottom, #fcfff4, #e9e9ce); /* Градиент */
+    color: #a00;
+   }
+
+
+
 .border { 
-    //background: #70809014;
+    /* background: #70809014; */
     border: dashed 1px ; 
 }
   
@@ -17,8 +44,12 @@ input {
 	display: inline-block;
 }
 
+.info-label {
+	display: inline-block;
+}
+
 div.holst {
-	//background: lightblue;	
+	/* background: lightblue;	*/
     overflow: scroll; /* Добавляем полосы прокрутки */
 	width:85%;
 	height:85%;
@@ -27,19 +58,19 @@ div.holst {
 	padding-right: 30px;
 }
 
-div.main-window 
-{
-	//width:100%;
-	//height:100%;
-    //border: solid 1px red; 
+div.main-window {
+	/* width:100%;
+	 height:100%;
+	 border: solid 1px red; 
+	*/
 }
 
 .debug-info {
 	width:100%;
 	height: 50px;
-	position: fixed;
+	/*position: fixed;*/
 	top: 0px;
-	left: 300px;
+	/*left: 300px;*/
 }
    
 .menu {
@@ -47,13 +78,10 @@ div.main-window
     border: solid 1px;
 	display: inline-block;
 	vertical-align: top;
-	//max-width: 130px;
-	width: 10%;
+	min-width: 170px;
 }
    
 .menu-button {
-	width:120;
-	height:40;
 	margin-top: 5;
 	margin-bottom: 5;
 	margin-left: 5;
