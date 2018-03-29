@@ -104,6 +104,13 @@ function SaveShapeToFile()
 	saveAs(bb, 'save.svg');
 }
 
+function SetMainWindowSize()
+{
+	elmHolstCont = document.getElementById('holst-container');
+	elmHolstCont.style.width = "" + (window.innerWidth - 270) + "px";
+	elmHolstCont.style.height = window.innerHeight-110 + "px";
+}
+
 function Init()
 {
 	// глообальные элементы
@@ -112,6 +119,8 @@ function Init()
 	elmXValue = document.getElementById('xvalue');
 	elmEValue = document.getElementById('yvalue');
 	elmHolst = document.getElementById('Holst');
+
+	SetMainWindowSize()
 
 
 	// Инициализация сохранения чтения файлов
@@ -159,6 +168,8 @@ function Init()
 	SelectClick();
 
 	window.onbeforeunload = WindowExit;
+	window.onresize = SetMainWindowSize;
+
 
 }
 
