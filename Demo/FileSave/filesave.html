@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function save() 
+{
+  alert('save');
+  saveTextAsFile();
+ 
+	// Проверяем поддержку File API 
+	//if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Работает
+	//} else {
+  //		alert('File API не поддерживается данным браузером');
+  //	}
+
+  //	window.webkitRequestFileSystem(window.PERSISTENT, 1024*1024, onInitFs, errorHandler); 
+ 
+}
+
+function saveTextAsFile()
+{
+    //var textToWrite = document.getElementById("inputTextToSave").value;
+    var textToWrite = 'test';
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+    var fileNameToSaveAs ="123";// document.getElementById("inputFileNameToSaveAs").value;
+
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    if (window.URL != null)
+    {
+        // Chrome allows the link to be clicked
+        // without actually adding it to the DOM.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        // Firefox requires the link to be added to the DOM
+        // before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+    downloadLink.click();
+}
+  
+
+
+
+function onInitFs(fs) {
+
+  fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+
+    fileEntry.createWriter(function(fileWriter) {
+
+      fileWriter.onwriteend = function(e) {
+        console.log('Write completed.');
+      };
+
+      fileWriter.onerror = function(e) {
+        console.log('Write failed: ' + e.toString());
+      };
+
+      var data = 'Ipsum Lorem';
+      var bb = new Blob([data]);
+      fileWriter.write(bb.getBlob('text/plain'));
+
+    }, errorHandler);
+
+  }, errorHandler);
+
+}
+
+
+
+function errorHandler(e) {
+  var msg = '';
+
+  switch (e.code) {
+    case 10: //FileError.QUOTA_EXCEEDED_ERR:
+      msg = 'QUOTA_EXCEEDED_ERR';
+      break;
+    case 1: //FileError.NOT_FOUND_ERR:
+      msg = 'NOT_FOUND_ERR';
+      break;
+    case 2: //FileError.SECURITY_ERR:
+      msg = 'SECURITY_ERR';
+      break;
+	  
+    case 9: //FileError.INVALID_MODIFICATION_ERR:
+      msg = 'INVALID_MODIFICATION_ERR';
+      break;
+    case 7: //FileError.INVALID_STATE_ERR:
+      msg = 'INVALID_STATE_ERR';
+      break;
+    default:
+      msg = 'Unknown Error ' + e.code;
+      break;
+  };
+
+  console.log('Error: ' + msg);
+}
+
+
+</script>
+</head>
+<body>
+<input type='button' value='Сохранить' onclick='save()'/>
+</body>
+</html>
