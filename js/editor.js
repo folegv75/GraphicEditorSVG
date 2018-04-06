@@ -71,10 +71,6 @@ function ReadShapeFromFile()
 
 	for (; i < len; i++)
 	{
-		//console.log("Filename: " + files[i].name);
-		//console.log("Type: " + files[i].type);
-		//console.log("Size: " + files[i].size + " bytes");
-
 		let reader = new FileReader();
 		reader.onload = OnFileRead;
 		reader.readAsText(files[i]);
@@ -83,7 +79,24 @@ function ReadShapeFromFile()
 
 function OnFileRead(event)
 {
-	var contents = event.target.result;
+
+	let posFirstSvg = event.target.result.indexOf('<svg');
+	if (posFirstSvg<0) 
+	{
+		alert("В файле не найдена схема. Отсутвует элемент SVG.");
+		return;
+	}
+
+	let posLastSvg = event.target.result.lastIndexOf('</svg>');
+	if (posLastSvg<0) 
+	{
+		alert("Не найдено окончание схемы. Отсутвует завершающий SVG.");
+		return;
+	}
+
+	//TODO добавить определение версии. Убирать обрамление HTML
+
+	let contents = event.target.result.substring(posFirstSvg, posLastSvg+6);
 
 	var elem = document.getElementById('Holst');
 	elem.innerHTML = contents;
@@ -91,17 +104,11 @@ function OnFileRead(event)
 
 function SaveShapeToFile()
 {
-	var elem = document.getElementById('Holst');
-	var textforfile = elem.innerHTML;
-	var arr = [];
-	arr.push(textforfile);
-	// создает blob, его  параметр это массив
-	bb = new Blob(arr);
-	// специальная функция для сохранения blob данных в файле.
-	// приницип работы: сделать из blob URL объекта, сгненировать html <a> и 
-	// присвоить ссылку на URL, затем сгенерировать события нажатия на эту ссылку
-	// произодет скачивание файла по ссылке, но не с сервера, а с blob конвертированного в ссылку
-	saveAs(bb, 'save.svg');
+	let elem = document.getElementById('Holst');
+	let textforfile = '<!DOCTYPE html>\n<html>\n    <head>\n        <meta content="text/html; charset=utf-8" http-equiv="content-type">\n    </head>\n    <body>\n';
+	textforfile += '        <svg class="border" width="1500" height="1500" id="Holst" viewBox="0 0 1500 1500" ver="0.5">\n';
+	textforfile = textforfile + "            " + elem.innerHTML + "\n        </svg>\n    </body>\n</html>\n";
+	saveTextAsFile(textforfile,ShapeData.Filename);
 }
 
 function SetMainWindowSize()
@@ -121,7 +128,8 @@ function Init()
 	elmHolst = document.getElementById('Holst');
 
 	SetMainWindowSize()
-
+	
+	ShapeData.Filename = 'untitled.svg.html';
 
 	// Инициализация сохранения чтения файлов
 	var control = document.getElementById("your-files");
@@ -135,6 +143,7 @@ function Init()
 	control.addEventListener("click", SaveShapeToFile);
 
 	// Инициализация редактора фигур
+
 
 	ShapeData.currShape = 'select';
 	ShapeData.FigureGroup = null;

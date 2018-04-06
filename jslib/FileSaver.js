@@ -1,5 +1,30 @@
 // Новая функция сохранения в файл, только как текст
-function saveTextAsFile()
+function saveTextAsFile(textToWrite, fileNameToSaveAs)
+{
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Save file";
+    if (window.URL != null)
+    {
+        // Chrome allows the link to be clicked
+        // without actually adding it to the DOM.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        // Firefox requires the link to be added to the DOM
+        // before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+    downloadLink.click();
+}
+  
+function saveTextAsFileOld(textToWrite)
 {
     //var textToWrite = document.getElementById("inputTextToSave").value;
     var textToWrite = 'test';
@@ -26,7 +51,6 @@ function saveTextAsFile()
     }
     downloadLink.click();
 }
-  
 
 
 
