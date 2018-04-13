@@ -1056,6 +1056,21 @@ function CutOffStringOnWidth(pSrc, pStartPos, pMaxWidth, pCuttingType)
 		Res.StartPos = pStartPos;
 		Res.EndPos = testPos - 1;
 		// TODO перенос по словам и знакам препинания
+		//двигаемся обратно по строке пока не найдем пробельный символ или закончится строка
+		if (pCuttingType='word') 
+		{
+			testPos = testPos -1;
+			while (testPos>=0) {
+				let tSymb = pSrc.substr(testPos,1);
+				if (tSymb==' ') 
+				{
+					Res.EndPos = testPos;
+					break;
+				}
+				testPos--;
+			}
+
+		}
 
 	} else 
 	{
@@ -1180,7 +1195,8 @@ function ShapeRectSetCaption(fig, caption)
 	var isBreak = false;
 	while (!isBreak)
 	{
-		Res = CutOffStringOnWidth(testLine, Res.EndPos, w - LeftBound - RightBound, 'symbol');
+		//Res = CutOffStringOnWidth(testLine, Res.EndPos, w - LeftBound - RightBound, 'symbol');
+		Res = CutOffStringOnWidth(testLine, Res.EndPos, w - LeftBound - RightBound, 'word');
 		currtext = testLine.substring(Res.StartPos, Res.EndPos);
 
 		var shapeCaption = document.createElementNS(xmlns, 'text');

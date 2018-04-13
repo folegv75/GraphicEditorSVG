@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans');
+﻿@import url('https://fonts.googleapis.com/css?family=Noto+Sans');
+
+@font-face {
+    font-family: MyMomospace; /* Гарнитура шрифта */
+    /*src: url(fonts/pompadur.eot); /* Для IE5-8 */
+    src: local(InconsolataCyr), url(../fonts/InconsolataCyr.ttf); /* Для остальных браузеров */
+}
 
 body {
 	font-family: "Noto Sans", sans-serif;
@@ -12,7 +18,7 @@ input {
 }
 
 label {
-	font-family: "Noto Sans", sans-serif;
+	font-family: testfont;
 	font-size: 10pt;
 }
 
@@ -26,13 +32,13 @@ label {
 	width: 160px;
 	cursor: pointer;
 	text-align: center;
-  }
-   .aBtn:hover {
+}
+  
+.aBtn:hover {
     box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Тень */
     background: linear-gradient(to bottom, #fcfff4, #e9e9ce); /* Градиент */
     color: #a00;
    }
-
 
 
 .border { 
