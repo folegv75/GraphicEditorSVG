@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+	<title>Редактор фигур</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+
+	<script src="jslib/FileSaver.js"></script>
+	<script src="js/editor.js"></script>
+</head>
+
+<body>
+	<div class='debug-info' id='debug-info'>
+			<span style='width:15px' class='label info-label'>X=</span>
+			<span style='width:30px' class='intvalue info-label' id='xvalue'></span>
+			<span style='width:15px' class='label info-label'>Y=</span>
+			<span style='width:30px' class='intvalue info-label' id='yvalue'></span>
+			<span style='width:200px' class='intvalue info-label' id='add-debug-info'></span>
+	</div>
+<div class='main-window'>
+		<div class='menu border'>
+			<div>
+					<label for="btnSelect" class="menu-button aBtn">Выбор</label>
+				<input type="button"  id='btnSelect' hidden>
+			</div>
+			<div>
+					<label for="btnRectangle" class="menu-button aBtn">Прямоугольник</label>
+				<input type="button"  id='btnRectangle' hidden>
+			</div>
+		<!--		
+			<div>
+				<input type="button" value='Круг' class='menu-button' id='btnCircle' />
+			</div>
+			<div>
+				<input type="button" value='Текст' class='menu-button' id='btnText' />
+			</div>
+		-->
+			<div>
+					<label for="btnLine" class="menu-button aBtn">Линия</label>
+					<input type="button" id='btnLine' hidden>
+			</div>
+			<div>
+					<label for="your-files-save" class="menu-button aBtn">Сохранить файл</label>
+					<input type="button" id="your-files-save" hidden/>
+			</div>
+			<div>
+					<label for="your-files" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
+					<input type="file" name="upload" id="your-files" hidden>
+			</div>
+
+
+			<div>
+				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Спецификация SVG</a>
+			</div>
+			<div id='info'></div>
+		</div>
+		
+		<div class='holst' id='holst-container'>
+			<svg class='border' width="1500" height="1500" id="Holst" viewBox="0 0 1500 1500"></svg>
+		</div>
+	</div>
+
+</body>
+
+</html>
