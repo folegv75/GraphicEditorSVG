@@ -14,11 +14,11 @@ body {
 input {
 	font-family: "Noto Sans", sans-serif;
 	font-size: 10pt;
-    padding: 0px; /* Скиним поля у кнопок. Управлять ими будем сами, так как оформление свое */
+    padding: 0px; /* Скинем поля у кнопок. Управлять ими будем сами, так как оформление свое */
 }
 
 label {
-	font-family: testfont;
+	font-family: "Noto Sans", sans-serif;
 	font-size: 10pt;
 }
 
