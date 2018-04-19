@@ -1011,127 +1011,92 @@ function ShapeAddCircle(x, y, r)
 
 /**
  * Обрезать строку по ширине
- * @param {string} src - исходная строка
+ * @param {string} pSrc - исходная строка
  * @param {number} pStartPos - начальный номер строки, начинается с нуля
  * @param {number} pMaxwidth - максимально допустимая длина в пикселах
  * @param {string} pCuttingType - тип обрезки 'word' - по словам, 'symbol' - по символам
  * 
- * @returns {object} 
+ * @returns {object} StartPos - позиция начала строки, Length - количество символов, которые поместятся, NextPos - позиция следующей строки
  */
 function CutOffStringOnWidth(pSrc, pStartPos, pMaxWidth, pCuttingType)
 {
+	// NextPos - указывает на следующий символ после тестируемой строки
 	var Res = {};
-	Res.StartPos = 0;
-	Res.EndPos = 0;
+	Res.StartPos = pStartPos;
+	Res.NextPos = pStartPos;
 	Res.Length = 0;
+
+	// Если пустая строка, то строка не помещается
+	if (pSrc.length==0) 
+	{
+		return Res;
+	}
+	
+	// элемент на котором будем вычислять длину
 	var canvas = document.getElementById("Holst");
 
-	var sx = 50;
-	var sy = 50;
 	var tempShape = document.createElementNS(xmlns, 'text');
-	tempShape.setAttributeNS(null, 'x', sx);
-	tempShape.setAttributeNS(null, 'y', sy);
+	tempShape.setAttributeNS(null, 'x', 50);
+	tempShape.setAttributeNS(null, 'y', 50);
 	//tempShape.style.font = "14pt 'Noto Sans', sans-serif";
 	//tempShape.style.fillStyle = "#000";
 	tempShape.setAttributeNS(null, 'fill', 'rgba(128,128,128,0)');
 
 	HolstAppendShape(tempShape);
 
-
-	var testString = "";
-	var testPos = pStartPos - 1;
-	var maxTestPos = pSrc.length - 1;
-
-	// накапливаем длину строки, которая влазит в максимальную длину
+	// накапливаем длину строки
 	stop = false;
-	do
+	while (Res.NextPos < pSrc.length)
 	{
-		testPos++;
-		var testSymbol = pSrc.substr(testPos);
-		tempShape.innerHTML = pSrc.substring(pStartPos, testPos);
+		Res.NextPos++;
+		tempShape.innerHTML = pSrc.substring(Res.StartPos, Res.NextPos);
+
 		currwidth = tempShape.getBBox().width;
 		if (currwidth > pMaxWidth) 
 		{
 			stop = true;
+			break;
 		}
-	} while (stop == false && testPos <= maxTestPos);
+	}
+
+	// удалили объем на котором рисовали
 	HolstRemoveShape(tempShape);
+
 	// вся строка влезла или нет
-	if (stop) 
+	if (stop)
 	{
-		// строка должна быть обрезана
-		Res.StartPos = pStartPos;
-		Res.EndPos = testPos - 1;
-		// TODO перенос по словам и знакам препинания
-		//двигаемся обратно по строке пока не найдем пробельный символ или закончится строка
+		Res.NextPos--;
+
+		// Если обрезка по словам, то найдем границы слов, иначе просто обрежем строку по не влезшему символу
 		if (pCuttingType='word') 
 		{
-			testPos = testPos -1;
-			while (testPos>=0) {
-				let tSymb = pSrc.substr(testPos,1);
-				if (tSymb==' ') 
+			// какой символ не поместился
+			let tSymb = pSrc.substr(Res.NextPos+1,1);
+			// Если не влез пробельный символ, значит слово поместилось.Ничего не делаем, просто обрезаем строку
+			if (!(tSymb==' ')) 
+			{	
+				// иначем будем искать предыдущий пробел. Если найдем, то обрежем по пробелу, иначе обрежим как есть
+				// двигаемся обратно по строке пока не найдем пробельный символ или закончится строка
+				let SpacePos = Res.NextPos;
+				while (SpacePos >= Res.StartPos) 
 				{
-					Res.EndPos = testPos;
-					break;
+					let tSymb = pSrc.substr(SpacePos,1);
+					if (tSymb==' ') 
+					{
+						Res.NextPos = SpacePos + 1;
+						break;
+					}
+					SpacePos--;
 				}
-				testPos--;
 			}
-
 		}
+	} 
 
-	} else 
-	{
-		// влезла вся строка
-		Res.StartPos = pStartPos;
-		Res.EndPos = testPos;
-	}
+	// Посчитаем длину строки
+	Res.Length = Res.NextPos - Res.StartPos;
 	return Res;
 }
 
-// function CutOffStringOnWidthCanvas(pSrc, pStartPos, pMaxWidth, pCuttingType)
-// {
-// 	var Res = {};
-// 	Res.StartPos = 0;
-// 	Res.EndPos = 0;
-// 	Res.Length = 0;
-// 	var canvas = document.getElementById("canvas");
-// 	var context = canvas.getContext("2d");
-
-// 	context.font = "14pt 'Noto Sans', sans-serif";
-// 	context.fillStyle = "#000";
-
-// 	var testString = "";
-// 	var testPos = pStartPos-1;
-// 	var maxTestPos = pSrc.length-1;
-
-// 	// накапливаем длину строки, которая влазит в максимальную длину
-// 	stop = false;
-// 	do
-// 	{
-// 		testPos++;
-// 		var testSymbol = pSrc.substr(testPos);
-// 		currwidth = context.measureText(pSrc.substring(pStartPos,testPos)).width;
-// 		if (currwidth > pMaxWidth) 
-// 		{
-// 			stop = true;
-// 		}
-// 	} while (stop == false && testPos<=maxTestPos);
-
-// 	// вся строка влезла или нет
-// 	if (stop) 
-// 	{
-// 		// строка должна быть обрезана
-// 		Res.StartPos = pStartPos;
-// 		Res.EndPos = testPos-1;
-
-// 	} else 
-// 	{
-// 		// влезла вся строка
-// 		Res.StartPos = pStartPos;
-// 		Res.EndPos = testPos;
-// 	}
-// 	return Res;
-// }
 
 // Создает фигуру прямоугольник
 function ShapeAddRectangle(x, y, w, h)
@@ -1198,13 +1163,13 @@ function ShapeRectSetCaption(fig, caption)
 	var baseY = y + CharRect.AddY + TopBound;
 	var currY = baseY;
 	var Res = {};
-	Res.EndPos = 0;
-	var isBreak = false;
-	while (!isBreak)
+	Res.NextPos = 0;
+	while (Res.NextPos < testLine.length)
 	{
-		//Res = CutOffStringOnWidth(testLine, Res.EndPos, w - LeftBound - RightBound, 'symbol');
-		Res = CutOffStringOnWidth(testLine, Res.EndPos, w - LeftBound - RightBound, 'word');
-		currtext = testLine.substring(Res.StartPos, Res.EndPos);
+		Res = CutOffStringOnWidth(testLine, Res.NextPos, w - LeftBound - RightBound, 'word');
+		// Если не влазит даже один символ, то ничего не выводим
+		if (Res.Length==0) break;
+		currtext = testLine.substr(Res.StartPos, Res.Length);
 
 		var shapeCaption = document.createElementNS(xmlns, 'text');
 		shapeCaption.setAttributeNS(null, 'x', x + LeftBound);
@@ -1213,9 +1178,8 @@ function ShapeRectSetCaption(fig, caption)
 		shapeCaption.classList.add('caption');
 
 		fig.appendChild(shapeCaption);
-
 		currY = currY + CharRect.Leading;
-		if (Res.EndPos >= testLine.length) isBreak = true;
+		if (currY >= (y + h - BottomBound/2)) break;
 	}
 
 }
