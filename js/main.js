@@ -1,4 +1,3 @@
-/* /// <reference path="editor.js" />*/
 
 var MainApp = null;
 
@@ -6,7 +5,9 @@ class Application
 {
 	constructor()
 	{
-
+        // TODO создать структуры взаимосвязанных объектов
+        this.Holst = new Holst();
+        // TODO инициализация подписчиков
         this.InitEventListener();
     }
 
