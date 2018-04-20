@@ -1,7 +1,6 @@
 // посмотреть пример библиотеки paperjs.org
 // 2918-03-27
 let ShapeData = {};
-var xmlns = "http://www.w3.org/2000/svg";
 
 class Point
 {
@@ -178,7 +177,6 @@ function Init()
 	elmHolst.addEventListener('touchstart', HolstTouchStart, false);
 	elmHolst.addEventListener('touchmove', HolstTouchMove, false);
 	elmHolst.addEventListener('touchend', HolstTouchEnd, false);
-	document.addEventListener('keydown', HolstKeyDown);
 	document.addEventListener('keydown', HolstKeyDown);
 	elmHolst.addEventListener('contextmenu', HolstContextMenu);
 	SelectClick();

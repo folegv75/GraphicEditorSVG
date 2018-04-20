@@ -1,5 +1,38 @@
 /* /// <reference path="editor.js" />*/
 
-gene
+var MainApp = null;
 
-x = new Point(x,y);
+class Application 
+{
+	constructor()
+	{
+
+        this.InitEventListener();
+    }
+
+    
+        
+
+    /** Создание обработчиков подисок на событие
+    */        
+   InitEventListener()
+   {
+       document.addEventListener("keydown",this.OnKeyDown)
+   }
+
+    /**
+    * @param {KeyboardEvent} Event
+    */        
+    OnKeyDown(Event)
+    {
+        console.log(Event.key)
+    }
+   
+}
+
+function ApplicationInit()
+{
+    MainApp = new Application; 
+}
+
+window.onload = ApplicationInit;
