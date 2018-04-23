@@ -117,6 +117,7 @@ function SaveShapeToFile()
 	saveTextAsFile(textforfile,ShapeData.Filename);
 }
 
+// перенес
 function SetMainWindowSize()
 {
 	elmHolstCont = document.getElementById('holst-container');
