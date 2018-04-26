@@ -3,13 +3,13 @@ class HolstContainer
 	constructor(Id)
 	{	
 		this.Id = Id;
-		this.ElemSelf = document.getElementById(Id); 
+		this.SelfElem = document.getElementById(Id); 
 	}
     
     SetMainWindowSize()
     {
-        this.ElemSelf.style.width = "" + (window.innerWidth - 270) + "px";
-        this.ElemSelf.style.height = window.innerHeight-110 + "px";
+        this.SelfElem.style.width = "" + (window.innerWidth - 270) + "px";
+        this.SelfElem.style.height = window.innerHeight-110 + "px";
     }
 	
 }

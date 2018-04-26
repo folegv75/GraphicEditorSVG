@@ -9,19 +9,21 @@
 
 	<script src="js/Const.js"></script>
 	<script src="js/Util.js"></script>
+	<script src="js/BaseControl.js"></script>
 	<script src="js/Label.js"></script>
+	<script src="js/Button.js"></script>
 	<script src="js/HolstContaier.js"></script>	
-	<script src="js/Main.js"></script>
 	<script src="js/Holst.js"></script>
+	<script src="js/Main.js"></script>
 </head>
 
 <body>
 	<div class='debug-info' id='debug-info'>
 			<span style='width:15px' class='label info-label'>X=</span>
-			<span style='width:30px' class='intvalue info-label' id='xvalue'></span>
+			<span style='width:30px' class='intvalue info-label' id='lblXValue'></span>
 			<span style='width:15px' class='label info-label'>Y=</span>
-			<span style='width:30px' class='intvalue info-label' id='yvalue'></span>
-			<span style='width:200px' class='intvalue info-label' id='add-debug-info'></span>
+			<span style='width:30px' class='intvalue info-label' id='lblYValue'></span>
+			<span style='width:200px' class='intvalue info-label' id='lblbDebugInfo'></span>
 	</div>
 <div class='main-window'>
 		<div class='menu border'>
@@ -46,19 +48,19 @@
 					<input type="button" id='btnLine' hidden>
 			</div>
 			<div>
-					<label for="your-files-save" class="menu-button aBtn">Сохранить файл</label>
-					<input type="button" id="your-files-save" hidden/>
+					<label for="btnSaveFile" class="menu-button aBtn">Сохранить файл</label>
+					<input type="button" id="btnSaveFile" hidden/>
 			</div>
 			<div>
-					<label for="your-files" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
-					<input type="file" name="upload" id="your-files" hidden>
+					<label for="btnLoadFile" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
+					<input type="file" name="upload" id="btnLoadFile" hidden>
 			</div>
 
 
 			<div>
 				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Спецификация SVG</a>
 			</div>
-			<div id='info'></div>
+			<div id='idInfo'></div>
 		</div>
 		
 		<div class='holst' id='holst-container'>

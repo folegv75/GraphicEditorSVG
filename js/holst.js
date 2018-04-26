@@ -1,8 +1,8 @@
-class Holst 
+class Holst extends BaseControl
 {
 	constructor(id)
 	{
-		this.Id = id;
-		this.SelfElem = document.getElementById(id);
+		super(id);
 	}
+	
 }
