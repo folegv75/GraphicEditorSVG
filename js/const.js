@@ -15,3 +15,11 @@ Const.BtnRectangleId = 'btnRectangle';
 Const.BtnLineId = 'btnLine';
 Const.BtnSaveFileId = 'btnSaveFile';
 Const.BtnLoadFileId = 'btnLoadFile';
+
+Const.BtnViewMoveLeftId = 'btnViewMoveLeft';
+Const.BtnViewMoveRightId = 'btnViewMoveRight';
+Const.BtnViewMoveUpId = 'btnViewMoveUp';
+Const.BtnViewMoveDownId = 'btnViewMoveDown';
+Const.BtnViewZoomInId = 'btnViewZoomIn';
+Const.BtnViewZoomNoneId = 'btnViewZoomNone';
+Const.BtnViewZoomOutId = 'btnViewZoomOut';
