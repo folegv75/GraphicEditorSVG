@@ -23,8 +23,7 @@ class Application
         this.Holst = new Holst(Const.HolstId);
         
         this.ZoomManager = new ZoomManager(this.Holst, 0, 0, 1500, 1500);
-
-        InitButtonZoom();
+        this.ZoomControl = new ZoomControl(this.ZoomManager);
 
         this.HolstContainer = new HolstContainer(Const.HolstContainerId);
         this.HolstContainer.SetMainWindowSize();
@@ -35,20 +34,7 @@ class Application
         //Запуск работы системы
         //SelectClick();
         
-    }  
-
-    InitButtonZoom()
-    {
-        this.ButtonViewMoveLeft = new Button(Const.BtnViewMoveLeftId);
-        this.ButtonViewMoveRight = new Button(Const.BtnViewMoveRightId);
-        this.ButtonViewMoveUp = new Button(Const.BtnViewMoveUpId);
-        this.ButtonViewMoveDown = new Button(Const.BtnViewMoveDownId);
-        this.ButtonViewZoomIn = new Button(Const.BtnViewZoomInId);
-        this.ButtonViewZoomNone = new Button(Const.BtnViewZoomNoneId);
-        this.ButtonViewZoomOut = new Button(Const.BtnViewZoomOutId);
-
-    }
-        
+    }        
 
     /** Создание обработчиков подисок на событие
     */        
