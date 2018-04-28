@@ -9,7 +9,8 @@ class ZoomManager
 	constructor (view, left, top, width, height)
 	{
 		this.View = view;
-		this.ZoomKoef = 1;
+		//this.ZoomKoef = 1;
+		this.Zoom = 100;
 		this.Left = left;
 		this.Top = top;
 		this.InitialHeight = height;
@@ -18,7 +19,7 @@ class ZoomManager
 		this.Height = height;
 		this.StepHorizontal = 100;
 		this.StepVertical = 100;
-		this.StepZoom = 0.1;
+		this.StepZoom = 25;
 	}
 
 	SetViewBoxSize()
@@ -54,8 +55,25 @@ class ZoomManager
 	ViewZoomIn()
 	{
 
-		this.ZoomKoef = this.ZoomKoef*this.StepZoom;
-		this.calcaulateZoom();
+		if (this.Zoom>=100) {
+			let tempZoom = this.Zoom + this.StepZoom;
+			if (tempZoom<200) {
+				let ZoomKoef = 1 - (tempZoom/100-1);
+				let tempWidth = Math.round(this.InitialWidth * ZoomKoef);
+				let tempHeight = Math.round(this.InitialHeight * ZoomKoef);
+			} else
+			{
+				let ZoomKoef = tempZoom/100;
+				let tempWidth = Math.round(this.InitialWidth / ZoomKoef);
+				let tempHeight = Math.round(this.InitialHeight / ZoomKoef);
+			}
+			if (tempWidth>=50 && tempHeight>=50) 
+			{
+				this.Width = tempWidth;
+				this.Height = tempHeight;
+				this.Zoom = tempZoom;
+			}
+		}
 		this.SetViewBoxSize()		
 
 	}
@@ -64,23 +82,40 @@ class ZoomManager
 	{
 		this.Width = this.InitialWidth;
 		this.Height = this.InitialHeight;
-		this.ZoomKoef = 1;
+		this.Zoom = 100;
 		this.SetViewBoxSize()		
 	}
 	
 	ViewZoomOut()
 	{
-		this.ZoomKoef = this.ZoomKoef/this.StepZoom;
-		this.calcaulateZoom();
-		this.SetViewBoxSize()		
+		//this.ZoomKoef = this.ZoomKoef/this.StepZoom;
+		//this.calculateZoom();
+		//this.SetViewBoxSize()		
 	}
 
-	calcaulateZoom()
+	calculateZoom()
 	{
-		this.Width = this.InitialWidth * this.ZoomKoef;
-		if (this.Width<1) this.Width = 1;
-		this.Height = this.InitialHeight * this.ZoomKoef;
-		if (this.Height<1) this.Height = 1;
+		if (this.Zoom>100) {
+			let ZoomKoef = 1 - (this.Zoom/100-1);
+			this.Width = Math.round(this.InitialWidth * ZoomKoef);
+			this.Height = Math.round(this.InitialHeight * ZoomKoef);
+			if (this.Width<100) {
+				this.Width = 100;
+				
+				// определим какой максимальный zoom получился
+				//this.Zoom = Math.round(this.InitialWidth / this.Width)*100;
+				//this.calculateZoom();
+			}
+
+			if (this.Height<100) {
+				this.Height = 100;
+				// определим какой максимальный zoom получился
+				this.Zoom = Math.round(this.InitialHeight / this.Height)*100;
+				this.calculateZoom();
+			}
+	
+		}
+
 	}
 
 }
