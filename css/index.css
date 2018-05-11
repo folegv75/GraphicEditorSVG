@@ -32,7 +32,6 @@ label {
 	width: 160px;
 	cursor: pointer;
 	text-align: center;
-	user-select: none;	
 	-webkit-user-select: none;	
 	-moz-user-select: none;	
 	user-select: none;	
@@ -86,8 +85,9 @@ div.holst {
 	width:85%;
 	height:85%;
     border: solid 1px lightgray; 
-	padding: 15px;
-	padding-right: 30px;
+	padding: 5px;
+	padding-right: 16px;
+	/*margin: 5px;*/
 }
 
 div.main-window {
@@ -124,15 +124,29 @@ div.main-window {
    background-color: #dbeaf7
 }
 
+/*
 text {
 	cursor: default;
 	font-size: 10pt;
 	font-family: "Noto Sans", sans-serif;
-}
+}*/
 
 textarea.input-field {
 	font-size: 10pt;
 	font-family: "Noto Sans", sans-serif;
 	width:100%;
 	height:100%;
+}
+
+svg.ruler text {
+	font-size: 10pt;
+	font-family: "Arial";
+	-webkit-user-select: none;	
+	-moz-user-select: none;	
+	user-select: none;	
+}
+	
+	
+#Holst {
+	border: 1px dashed  lightgray;
 }

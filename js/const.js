@@ -4,6 +4,11 @@ var xmlns = "http://www.w3.org/2000/svg";
 var Const = {};
 Const.HolstContainerId = 'holst-container';
 Const.HolstId = 'Holst';
+Const.PaperId = 'HolstPaper';
+
+Const.GridId = 'Grid';
+Const.RulerHorizontal = 'ruler-h';
+Const.RulerVertical = 'ruler-v';
 
 Const.InfoId = 'lblInfo';
 Const.AddDebugInfoId = 'lblbDebugInfo';
@@ -23,3 +28,7 @@ Const.BtnViewMoveDownId = 'btnViewMoveDown';
 Const.BtnViewZoomInId = 'btnViewZoomIn';
 Const.BtnViewZoomNoneId = 'btnViewZoomNone';
 Const.BtnViewZoomOutId = 'btnViewZoomOut';
+
+var RulerType = {};
+RulerType.Horizontal = 1;
+RulerType.Vertical = 2;

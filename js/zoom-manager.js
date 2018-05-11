@@ -6,9 +6,9 @@ class ZoomManager
 	/**
 	 * @param {Holst} view 
 	 */
-	constructor (view, left, top, width, height)
+	constructor (left, top, width, height)
 	{
-		this.View = view;
+		this.View = [];
 		this.ZoomKoef = 0;
 		this.Zoom = 100;
 		this.Left = left;
@@ -22,10 +22,19 @@ class ZoomManager
 		this.StepZoom = 0.25;
 	}
 
+	/**
+	 * @param {Holst} view 
+	 */
+	AppendView(view)
+	{
+		this.View.push(view);
+	}
+
 	SetViewBoxSize()
 	{
-		let value = '' + this.Left + ' ' + this.Top + ' ' + this.Width + ' ' + this.Height;
-		this.View.SelfElem.setAttributeNS(null,'viewBox', value)
+		for(let i=0; i<this.View.length; i++) this.View[i].SetViewBoxSize(this.Left, this.Top, this.Width, this.Height);
+	//	let value = '' + this.Left + ' ' + this.Top + ' ' + this.Width + ' ' + this.Height;
+	//	this.View.SelfElem.setAttributeNS(null,'viewBox', value)
 	}
 
 	ViewMoveLeft() 
@@ -164,6 +173,9 @@ class ZoomControl
 
 		this.ButtonViewZoomOut = new Button(Const.BtnViewZoomOutId);
 		this.ButtonViewZoomOut.SetOnClick(this.ButtonViewZoomOutOnClick.bind(this));
+
+		this.InfoLabel = new Label('lblZoomInfo');
+		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
 	}
 	
 	ButtonViewMoveLeftOnClick(Evnt)
@@ -189,16 +201,22 @@ class ZoomControl
 	ButtonViewZoomInOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomIn();
+		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+		
 	}
 
 	ButtonViewZoomNoneOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomNone();
+		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+
 	}
 
 	ButtonViewZoomOutOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomOut();
+		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+
 	}
 
 }

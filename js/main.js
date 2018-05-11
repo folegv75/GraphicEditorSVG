@@ -14,16 +14,28 @@ class Application
         this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
         this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
 
-        this.ButtonSelect = new Button(Const.BtnSelectId)
-        this.ButtonRectangle = new Button(Const.BtnRectangleId)
-        this.ButtonLine = new Button(Const.BtnLineId)
-        this.ButtonSaveFile = new Button(Const.BtnSaveFileId)
-        this.ButtonLoadFile = new Button(Const.BtnLoadFileId)
+        this.ButtonSelect = new Button(Const.BtnSelectId);
+        this.ButtonRectangle = new Button(Const.BtnRectangleId);
+        this.ButtonLine = new Button(Const.BtnLineId);
+        this.ButtonSaveFile = new Button(Const.BtnSaveFileId);
+        this.ButtonLoadFile = new Button(Const.BtnLoadFileId);
 
         this.Holst = new Holst(Const.HolstId);
-        
-        this.ZoomManager = new ZoomManager(this.Holst, 0, 0, 1500, 1500);
+
+        this.Grid = new Grid(Const.GridId, 0, 0, 1500,1500);
+        this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, 0, 1500);
+        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, 1500);
+
+       
+        this.ZoomManager = new ZoomManager(0, 0, 1500, 1500);
         this.ZoomControl = new ZoomControl(this.ZoomManager);
+
+        
+        this.ZoomManager.AppendView(this.Holst);
+        this.ZoomManager.AppendView(this.Grid);
+        this.ZoomManager.AppendView(this.RulerHorizontal);
+        this.ZoomManager.AppendView(this.RulerVertical);
+
 
         this.HolstContainer = new HolstContainer(Const.HolstContainerId);
         this.HolstContainer.SetMainWindowSize();
@@ -42,26 +54,42 @@ class Application
     {
         document.addEventListener("keydown",this.OnKeyDown)
 
-       this.ButtonSelect.SetOnClick(this.ButtonSelectOnClick);
-       this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick);
-       this.ButtonLoadFile.SetOnClick(this.ButtonLoadFile);
-       this.ButtonRectangle.SetOnClick(this.ButtonRectangleOnClick);
-       this.ButtonLine.SetOnClick(this.ButtonLineOnClick);
+       this.ButtonSelect.SetOnClick(this.ButtonSelectOnClick.bind(this));
+       this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
+       this.ButtonLoadFile.SetOnClick(this.ButtonLoadFileOnClick.bind(this));
+       this.ButtonRectangle.SetOnClick(this.ButtonRectangleOnClick.bind(this));
+       this.ButtonLine.SetOnClick(this.ButtonLineOnClick.bind(this));
 
-       this.Holst.SetOnMouseDown(this.HolstOnMouseDown);
-       this.Holst.SetOnMouseUp(this.HolstOnMouseUp);
-       this.Holst.SetOnMouseMove(this.HolstOnMouseMove);
-       this.Holst.SetOnMouseOver(this.HolstOnMouseOver);
-       this.Holst.SetOnTouchStart(this.HolstOnTouchStart, false);
-       this.Holst.SetOnTouchMove(this.HolstOnTouchMove, false);
-       this.Holst.SetOnTouchEnd(this.HolstOnTouchEnd, false);
-       this.Holst.SetOnContextMenu(this.HolstOnContextMenu);
+       this.Holst.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
+       this.Holst.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
+       this.Holst.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
+       /*
+            Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
+            В нем будем вся последовательность тегов, на которым двигается мышь
 
+       this.Holst.SetOnMouseOver(this.HolstOnMouseOver.bind(this));
+       */
+
+       this.Holst.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
+       this.Holst.SetOnTouchMove(this.HolstOnTouchMove.bind(this), false);
+       this.Holst.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), false);
+       this.Holst.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
+
+       let el = document.getElementById(Const.HolstContainerId);
+       el.addEventListener("scroll",this.onScroll.bind(this));
    
-
-       window.onbeforeunload = this.OnExit;
-       window.onresize = this.OnResizeMainWindow;
+       window.onbeforeunload = this.OnExit.bind(this);
+       window.onresize = this.OnResizeMainWindow.bind(this);
        
+    }
+
+    /**
+    * @param {ScrollEvent} Evnt
+    */  
+    onScroll(Evnt)
+    {
+        //this.ZoomManager.SetViewBoxSize();
+        this.ShowInfoMouseEvent(Evnt);
     }
 
     OnExit() 
@@ -82,6 +110,7 @@ class Application
     */        
     OnKeyDown(Event)
     {
+
         console.log('KeyDown:',Event.key)
     }
 
@@ -125,12 +154,32 @@ class Application
         console.log('ButtonLineOnClick')
     } 
 
+
+    ShowInfoMouseEvent(Event)
+    {
+        this.LabelXValue.SetValue(Event.offsetX);
+        this.LabelYValue.SetValue(Event.offsetY);
+        let pv = Event.type;
+        for (let i=0; i<Event.path.length;i++) 
+        {
+            pv += ' | ' + Event.path[i].tagName+'#'+Event.path[i].id ; 
+            if (Event.path[i].tagName=='BODY') break;
+        }
+        pv += ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
+        this.LabelDebugInfo.SetValue(pv);
+    }
+
     /**
     * @param {MouseEvent} Event
     */        
     HolstOnMouseDown(Event)
     {
-       console.log('HolstOnMouseDown')
+        /*
+            В событии от мыши координаты не учитывают скроллинг, масштабирование, сдвиг.
+            Необходимо преобразовать их из координаты мыши, в координату холста с учетом скролиинга, масштабирования и сдвига
+            скролинг учитывается внутри svg
+        */
+        this.ShowInfoMouseEvent(Event);
     } 
 
     /**
@@ -138,7 +187,7 @@ class Application
     */        
     HolstOnMouseUp(Event)
     {
-       console.log('HolstOnMouseUp')
+        this.ShowInfoMouseEvent(Event);
     } 
 
     /**
@@ -146,7 +195,7 @@ class Application
     */        
     HolstOnMouseMove(Event)
     {
-       console.log('HolstOnMouseMove')
+        this.ShowInfoMouseEvent(Event);
     } 
 
     /**
@@ -154,7 +203,8 @@ class Application
     */        
     HolstOnMouseOver(Event)
     {
-       console.log('HolstOnMouseOver')
+       // ShowInfoMouseEvent(Event);
+       //console.log('HolstOnMouseOver')
     } 
 
     HolstOnTouchStart(Event)
