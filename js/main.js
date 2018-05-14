@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 
 var MainApp = null;
 
@@ -11,8 +12,7 @@ class Application
         this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
         this.LabelXValue = new Label(Const.XValueId);
         this.LabelYValue = new Label(Const.YValueId);
-        this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
-        this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
+        this.LabelTouchInfo = new Label(Const.LabelTouchInfo);
 
         this.ButtonSelect = new Button(Const.BtnSelectId);
         this.ButtonRectangle = new Button(Const.BtnRectangleId);
@@ -52,7 +52,7 @@ class Application
     */        
     InitEventListener()
     {
-        document.addEventListener("keydown",this.OnKeyDown)
+        document.addEventListener("keydown",this.OnKeyDown);
 
        this.ButtonSelect.SetOnClick(this.ButtonSelectOnClick.bind(this));
        this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
@@ -63,11 +63,9 @@ class Application
        this.Holst.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
        this.Holst.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
        this.Holst.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
-       /*
-            Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
-            В нем будем вся последовательность тегов, на которым двигается мышь
 
-       this.Holst.SetOnMouseOver(this.HolstOnMouseOver.bind(this));
+       /*   Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
+            В нем будем вся последовательность тегов, на которым двигается мышь
        */
 
        this.Holst.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
@@ -104,14 +102,13 @@ class Application
     }
 
 
-
     /**
     * @param {KeyboardEvent} Event
     */        
     OnKeyDown(Event)
     {
 
-        console.log('KeyDown:',Event.key)
+        console.log('KeyDown:',Event.key);
     }
 
     /**
@@ -119,7 +116,7 @@ class Application
     */        
     ButtonSelectOnClick(Event)
     {
-    console.log('ButtonSelectOnClick')
+    console.log('ButtonSelectOnClick');
     }
 
     /**
@@ -127,7 +124,7 @@ class Application
     */        
     ButtonSaveFileOnClick(Event)
     {
-        console.log('ButtonSaveFileOnClick')
+        console.log('ButtonSaveFileOnClick');
     }
 
     /**
@@ -135,7 +132,7 @@ class Application
     */        
     ButtonLoadFileOnClick(Event)
     {
-        console.log('ButtonLoadFileOnClick')
+        console.log('ButtonLoadFileOnClick');
     }
    
     /**
@@ -143,7 +140,7 @@ class Application
     */        
     ButtonRectangleOnClick(Event)
     {
-        console.log('ButtonRectangleOnClick')
+        console.log('ButtonRectangleOnClick');
     }
   
     /**
@@ -151,35 +148,112 @@ class Application
     */        
     ButtonLineOnClick(Event)
     {
-        console.log('ButtonLineOnClick')
+        console.log('ButtonLineOnClick');
     } 
 
-
+    /** @desc Показать событие пера */   
     ShowInfoMouseEvent(Event)
     {
-        this.LabelXValue.SetValue(Event.offsetX);
-        this.LabelYValue.SetValue(Event.offsetY);
-        let pv = Event.type;
-        for (let i=0; i<Event.path.length;i++) 
-        {
-            pv += ' | ' + Event.path[i].tagName+'#'+Event.path[i].id ; 
-            if (Event.path[i].tagName=='BODY') break;
-        }
-        pv += ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
+        if (Event.offsetX!=undefined) this.LabelXValue.SetValue(Event.offsetX);
+        if (Event.offsetY!=undefined) this.LabelYValue.SetValue(Event.offsetY);
+        let pv = Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
         this.LabelDebugInfo.SetValue(pv);
     }
+
+    ConvertTouchCoordToHolst(touch)
+    {
+        var locx, locy, bx, by, newx, newy, sx, sy, point = {};
+        locx = Math.trunc(touch.pageX);
+        locy = Math.trunc(touch.pageY);
+        holstbounds = elmHolst.getBoundingClientRect();
+        by = Math.trunc(holstbounds.top);
+        bx = Math.trunc(holstbounds.left);
+    
+        sy = document.body.scrollTop;
+            sx = document.body.scrollLeft;
+    
+        point.X = locx - bx - sx;
+        point.Y = locy - by - sy;
+        return point;
+    }    
+
+    /** @desc Показать событие пера */
+    ShowInfoTouchEvent(Event)
+    {
+        /* Событие содержит массив касаний полотна 
+        changedTouches - массив объектов Touch
+        touches - массив объектов Touch
+        targetTouches - массив объектов Touch
+        каждый Touch прдставляет следующий важных для нас свойства:
+            identifier - уникальный идентификатор касания
+            screenX, screenY - координаты относительно верхнего угла экрана
+            сlientX, сlientY  - координаты относительно viewport браузера
+            pageX, pageY - координаты относительно документы с учтом скролинга документа. Используем их для расчета.
+            target - htmlelemnt когда было первое касание даже если свдинули или удалили элемент
+
+        Пример для одного касания:
+        touch start - все три массива объектов touch содержат касание. информация о касании одинакова.
+        touch move - все три массива объектов touch содержат касание. информация о касании одинакова.
+        touch end - touches и targetTouches - пустые. changedTouches - содержит касание которого было отпущено.
+
+        Event.path - над которым было первое касание. Далее не изменяется.
+        Event.target и Event.srcElement не изменяюстя и равны первому элементу где было касание
+        Для определения на каком элементе сработало событие будем использовать document.elementsFromPoint(t.clientX, t.clientY); 
+        Первый элемент массива будем считать верхним
+        
+        Если нет скролинга, координаты верхнего левого угла холста совпадает с touch PageX,PageY
+        При скролинге координаты холста меняются на величину скролинга. 
+        Тек поз Y = pageY - HolstRect.y;
+        */
+        
+       let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+
+        let thInfo = Event.type + Util.PathToString(Event.path);
+        for(let i=0; i<Event.changedTouches.length; i++) 
+        {
+            let t= Event.changedTouches[i];
+
+            thInfo += "<br>\n";
+            let tx = t.pageX - HolstRect.x;
+            let ty = t.pageY - HolstRect.y;
+            thInfo += 'tX=' + Math.round(tx) + '; tY=' +  Math.round(ty);
+            thInfo += '; Chg: id=' + t.identifier + ' scX=' + Math.round(t.screenX) + ' scY=' + Math.round(t.screenY) 
+            + '  | pgX=' + Math.round(t.pageX) + ' pgY=' + Math.round(t.pageY) + '  | clX=' + Math.round(t.clientX) + ' clY=' + Math.round(t.clientY);
+            
+            let ZZ = document.elementsFromPoint(t.clientX, t.clientY);            
+            for (let z=0; z<ZZ.length; z++)
+            {
+               // console.log(Util.ParentTreeToArray(ZZ[z]));
+            }
+
+        }
+        thInfo += "<br>\nHolst X=" + Math.round(HolstRect.x) + ' Y=' + Math.round(HolstRect.y);
+         //+ ' L='+HolstRect.left + ' T=' + HolstRect.top + ' W='+ HolstRect.width + ' H='+ HolstRect.height + ' R='+ HolstRect.right + ' B='+ HolstRect.bottom;
+
+        this.LabelTouchInfo.SetValue(thInfo);        
+
+       //console.log(thInfo);
+    }
+   
 
     /**
     * @param {MouseEvent} Event
     */        
     HolstOnMouseDown(Event)
     {
+        //console.log(Event.type);
         /*
             В событии от мыши координаты не учитывают скроллинг, масштабирование, сдвиг.
             Необходимо преобразовать их из координаты мыши, в координату холста с учетом скролиинга, масштабирования и сдвига
             скролинг учитывается внутри svg
         */
         this.ShowInfoMouseEvent(Event);
+
+        /*  Event.offsetX - координата X от нуля холста
+            Event.offsetY - координата Y от нуля холста
+            Пересчет в координаты холста не требуется
+         */
+        this.Holst.MouseDown(Event.offsetX, Event.offsetY, Event);
     } 
 
     /**
@@ -187,7 +261,9 @@ class Application
     */        
     HolstOnMouseUp(Event)
     {
+        //console.log(Event.type, Event);
         this.ShowInfoMouseEvent(Event);
+        this.Holst.MouseUp(Event.offsetX, Event.offsetY, Event);       
     } 
 
     /**
@@ -195,48 +271,56 @@ class Application
     */        
     HolstOnMouseMove(Event)
     {
+        //console.log(Event.type);
         this.ShowInfoMouseEvent(Event);
+        this.Holst.MouseMove(Event.offsetX, Event.offsetY, Event);
     } 
 
     /**
-    * @param {MouseEvent} Event
+    * @param {TouchEvent} Event
     */        
-    HolstOnMouseOver(Event)
+   HolstOnTouchStart(Event)
     {
-       // ShowInfoMouseEvent(Event);
-       //console.log('HolstOnMouseOver')
-    } 
-
-    HolstOnTouchStart(Event)
-    {
-        console.log('HolstOnTouchStart')
+        Event.preventDefault();        
+        //console.log(Event.type, Event);
+        this.ShowInfoTouchEvent(Event);
     }
 
-    HolstOnTouchMove(Event)
+    /**
+    * @param {TouchEvent} Event
+    */        
+   HolstOnTouchMove(Event)
     {
-        console.log('HolstOnTouchMove')
+        Event.preventDefault();        
+        //console.log(Event.type, Event);
+        this.ShowInfoTouchEvent(Event);
     }
 
-    HolstOnTouchEnd(Event)
+    /**
+    * @param {TouchEvent} Event
+    */        
+   HolstOnTouchEnd(Event)
     {
-        console.log('HolstOnTouchEnd')
+        Event.preventDefault();
+        //console.log(Event.type, Event);
+        this.ShowInfoTouchEvent(Event);
     }
 
     HolstOnKeyDown(Event)
     {
-        console.log('HolstOnKeyDown')
+        console.log('HolstOnKeyDown');
     }
 
     HolstOnContextMenu(Event)
     {
-        console.log('HolstOnContextMenu')
+        console.log('HolstOnContextMenu');
     }
   
 }
 
 function ApplicationInit()
 {
-    MainApp = new Application; 
+    MainApp = new Application(); 
 }
 
 window.onload = ApplicationInit;

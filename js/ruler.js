@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 class Ruler extends BaseControl
 {
 	constructor (id, rulertype, startpos, width)

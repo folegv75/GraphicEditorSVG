@@ -83,7 +83,7 @@ div.holst {
 	/* background: lightblue;	*/
     overflow: scroll; /* Добавляем полосы прокрутки */
 	width:85%;
-	height:85%;
+	height:50%;
     border: solid 1px lightgray; 
 	padding: 5px;
 	padding-right: 16px;
@@ -99,7 +99,7 @@ div.main-window {
 
 .debug-info {
 	width:100%;
-	height: 50px;
+	height: 100px;
 	/*position: fixed;*/
 	top: 0px;
 	/*left: 300px;*/

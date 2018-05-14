@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 class Grid extends BaseControl
 {
 	constructor (id, startX, startY, width, height)

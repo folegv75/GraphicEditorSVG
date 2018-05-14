@@ -1,3 +1,5 @@
+var xmlns = "http://www.w3.org/2000/svg";
+
 // посмотреть пример библиотеки paperjs.org
 // 2918-03-27
 let ShapeData = {};
@@ -28,6 +30,7 @@ function genId()
 	return xid;
 }
 
+// лишняя использовать функции document.elementsFromPoint(t.clientX, t.clientY); 
 // Найти фигуру, которая содержит координаты X, Y
 function FindFigureByXY(px, py)
 {

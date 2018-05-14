@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 class BaseControl
 {
     constructor (id)

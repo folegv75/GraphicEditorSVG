@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 /*description
 	Управляет окном просмотра полотна. Сдвигает его влево вправо. Масштабирует.
 **/
@@ -40,25 +42,25 @@ class ZoomManager
 	ViewMoveLeft() 
 	{
 		this.Left += this.StepHorizontal;
-		this.SetViewBoxSize()		
+		this.SetViewBoxSize();
 	}
 
 	ViewMoveRight()
 	{
 		this.Left -= this.StepHorizontal;
-		this.SetViewBoxSize()		
+		this.SetViewBoxSize();		
 	}
 	
 	ViewMoveUp()
 	{
 		this.Top += this.StepVertical;
-		this.SetViewBoxSize()		
+		this.SetViewBoxSize();		
 	}
 	
 	ViewMoveDown()
 	{
 		this.Top -= this.StepVertical;
-		this.SetViewBoxSize()		
+		this.SetViewBoxSize();		
 	}
 	
 	ViewZoomIn()
@@ -107,7 +109,7 @@ class ZoomManager
 		this.ZoomKoef += this.StepZoom;
 
 		this.calculateZoom();
-		this.SetViewBoxSize()		
+		this.SetViewBoxSize();
 	}
 
 	calculateZoom()

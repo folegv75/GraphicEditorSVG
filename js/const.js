@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 var xmlns = "http://www.w3.org/2000/svg";
 
 // Инициализация констант
@@ -6,14 +8,18 @@ Const.HolstContainerId = 'holst-container';
 Const.HolstId = 'Holst';
 Const.PaperId = 'HolstPaper';
 
-Const.GridId = 'Grid';
+Const.GridId = 'LayerGrid';
+Const.LayerLines = 'LayerLines';
+Const.LayerFigures = 'LayerFigures';
 Const.RulerHorizontal = 'ruler-h';
 Const.RulerVertical = 'ruler-v';
 
 Const.InfoId = 'lblInfo';
 Const.AddDebugInfoId = 'lblbDebugInfo';
+Const.LabelTouchInfo = 'lblTouchInfo';
 Const.XValueId = 'lblXValue';
 Const.YValueId = 'lblYValue';
+
 
 Const.BtnSelectId = 'btnSelect';
 Const.BtnRectangleId = 'btnRectangle';
@@ -29,6 +35,20 @@ Const.BtnViewZoomInId = 'btnViewZoomIn';
 Const.BtnViewZoomNoneId = 'btnViewZoomNone';
 Const.BtnViewZoomOutId = 'btnViewZoomOut';
 
+/** 
+    desc Тип направления линейки
+*/
 var RulerType = {};
-RulerType.Horizontal = 1;
-RulerType.Vertical = 2;
+/** @desc Горизонтальная линейка */
+RulerType.Horizontal = 'horizontal';
+/** @desc Вертикальная линейка */
+RulerType.Vertical = 'vertical';
+
+/** typedef {EditorEventType}
+    @property {string} PenDown Перо опущено
+*/
+var EditorEventType = {};
+EditorEventType.PenDown = 'pendown';
+EditorEventType.PenUp = 'penup';
+EditorEventType.PenMove = 'penmove';
+
