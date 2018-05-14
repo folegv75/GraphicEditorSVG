@@ -214,8 +214,8 @@ class Application
             let t= Event.changedTouches[i];
 
             thInfo += "<br>\n";
-            let tx = t.pageX - HolstRect.x;
-            let ty = t.pageY - HolstRect.y;
+            let tx = t.pageX - HolstRect.left;
+            let ty = t.pageY - HolstRect.top;
             thInfo += 'tX=' + Math.round(tx) + '; tY=' +  Math.round(ty);
             thInfo += '; Chg: id=' + t.identifier + ' scX=' + Math.round(t.screenX) + ' scY=' + Math.round(t.screenY) 
             + '  | pgX=' + Math.round(t.pageX) + ' pgY=' + Math.round(t.pageY) + '  | clX=' + Math.round(t.clientX) + ' clY=' + Math.round(t.clientY);
@@ -227,7 +227,7 @@ class Application
             }
 
         }
-        thInfo += "<br>\nHolst X=" + Math.round(HolstRect.x) + ' Y=' + Math.round(HolstRect.y);
+        thInfo += "<br>\nHolst X=" + Math.round(HolstRect.left) + ' Y=' + Math.round(HolstRect.top);
          //+ ' L='+HolstRect.left + ' T=' + HolstRect.top + ' W='+ HolstRect.width + ' H='+ HolstRect.height + ' R='+ HolstRect.right + ' B='+ HolstRect.bottom;
 
         this.LabelTouchInfo.SetValue(thInfo);        
