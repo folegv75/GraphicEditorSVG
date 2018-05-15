@@ -10,12 +10,14 @@ class Util
     }
 
     /** @desc Возвращает путь к html элементам в виде строки. Останавливает разбор после тэге Body */
-    static PathToString(path)
+    static PathToString(path,stopid)
     {
         let res = '';
+        if (path==null) return res;
         for (let i=0; i<path.length;i++) 
         {
-            res += ' | ' + path[i].tagName+'#'+path[i].id ; 
+            res += ' | ' + path[i].tagName+'#'+path[i].id; 
+            if (stopid!=undefined) if (path[i].id==stopid) break;
             if (path[i].tagName=='BODY') break;
         }
         return res;
@@ -24,6 +26,7 @@ class Util
     static ParentTreeToArray(elem)
     {
         let res=[];
+        if (elem==null) return res;
         res.push(elem);
         while (elem.parentElement!=null)
         {

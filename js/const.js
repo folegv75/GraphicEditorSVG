@@ -14,11 +14,10 @@ Const.LayerFigures = 'LayerFigures';
 Const.RulerHorizontal = 'ruler-h';
 Const.RulerVertical = 'ruler-v';
 
-Const.InfoId = 'lblInfo';
 Const.AddDebugInfoId = 'lblbDebugInfo';
 Const.LabelTouchInfo = 'lblTouchInfo';
-Const.XValueId = 'lblXValue';
-Const.YValueId = 'lblYValue';
+Const.LabelMouseInfo = 'lblMouseInfo';
+Const.LabelStatusInfo = 'lblStatusInfo';
 
 
 Const.BtnSelectId = 'btnSelect';

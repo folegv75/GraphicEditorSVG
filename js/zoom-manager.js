@@ -176,8 +176,8 @@ class ZoomControl
 		this.ButtonViewZoomOut = new Button(Const.BtnViewZoomOutId);
 		this.ButtonViewZoomOut.SetOnClick(this.ButtonViewZoomOutOnClick.bind(this));
 
-		this.InfoLabel = new Label('lblZoomInfo');
-		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+		//this.InfoLabel = new Label('lblZoomInfo');
+		//this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
 	}
 	
 	ButtonViewMoveLeftOnClick(Evnt)

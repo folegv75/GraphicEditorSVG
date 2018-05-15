@@ -817,7 +817,7 @@ function MoveFigure()
 				shape.setAttributeNS(null, 'cx', E.offsetX);
 				shape.setAttributeNS(null, 'cy', E.offsetY);
 			}
-	let list = shape.querySelectorAll('link');
+	let list = shape.querySelectorAll('figlink');
 	for (let i = 0; i < list.length; i++)
 	{
 		let elm = list[i];
@@ -873,7 +873,7 @@ function MoveFigureApprove()
 				shape.setAttributeNS(null, 'cx', E.offsetX);
 				shape.setAttributeNS(null, 'cy', E.offsetY);
 			}
-	let list = shape.querySelectorAll('link');
+	let list = shape.querySelectorAll('figlink');
 	for (let i = 0; i < list.length; i++)
 	{
 		let elm = list[i];
@@ -1233,7 +1233,7 @@ function ShapeMoveRectangle(groupshape, x, y)
 
 			tmpShape.setAttributeNS(null, 'x', newx);
 			tmpShape.setAttributeNS(null, 'y', newy);
-		} else if (tmpShape.tagName == 'link')
+		} else if (tmpShape.tagName == 'figlink')
 		{
 		}
 	}
@@ -1281,7 +1281,7 @@ function ShapeAddLine(x1, y1, x2, y2)
 		let figbegin = document.createElement('FigBegin');
 		figbegin.setAttributeNS(null, 'figid', ShapeData.FigureCursorDown.id);
 		groupShape.appendChild(figbegin);
-		let elmlink = document.createElement('link');
+		let elmlink = document.createElement('figlink');
 		elmlink.setAttributeNS(null, 'figid', groupShape.id);
 		elmlink.setAttributeNS(null, 'tip', 'begin');
 		ShapeData.FigureCursorDown.appendChild(elmlink);
@@ -1292,7 +1292,7 @@ function ShapeAddLine(x1, y1, x2, y2)
 		let figend = document.createElement('FigEnd');
 		figend.setAttributeNS(null, 'figid', ShapeData.FigureCursorUp.id);
 		groupShape.appendChild(figend);
-		let elmlink = document.createElement('link');
+		let elmlink = document.createElement('figlink');
 		elmlink.setAttributeNS(null, 'figid', groupShape.id);
 		elmlink.setAttributeNS(null, 'tip', 'end');
 		ShapeData.FigureCursorUp.appendChild(elmlink);

@@ -7,12 +7,8 @@ class Application
 	constructor()
 	{
 
-        // TODO создать структуры взаимосвязанных объектов
-
-        this.LabelDebugInfo = new Label(Const.AddDebugInfoId);
-        this.LabelXValue = new Label(Const.XValueId);
-        this.LabelYValue = new Label(Const.YValueId);
         this.LabelTouchInfo = new Label(Const.LabelTouchInfo);
+        this.LabelMouseInfo = new Label(Const.LabelMouseInfo);
 
         this.ButtonSelect = new Button(Const.BtnSelectId);
         this.ButtonRectangle = new Button(Const.BtnRectangleId);
@@ -40,7 +36,6 @@ class Application
         this.HolstContainer = new HolstContainer(Const.HolstContainerId);
         this.HolstContainer.SetMainWindowSize();
 
-        // TODO инициализация подписчиков
         this.InitEventListener();
         
         //Запуск работы системы
@@ -154,10 +149,12 @@ class Application
     /** @desc Показать событие пера */   
     ShowInfoMouseEvent(Event)
     {
-        if (Event.offsetX!=undefined) this.LabelXValue.SetValue(Event.offsetX);
-        if (Event.offsetY!=undefined) this.LabelYValue.SetValue(Event.offsetY);
-        let pv = Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
-        this.LabelDebugInfo.SetValue(pv);
+        let ofsx='';
+        let ofsy = '';
+        if (Event.offsetX!=undefined) ofsx = Event.offsetX;
+        if (Event.offsetY!=undefined) ofsy = Event.offsetY;
+        let pv = "X="+ofsx+" Y=" + ofsy + " " + Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
+        this.LabelMouseInfo.SetValue(pv);
     }
 
     ConvertTouchCoordToHolst(touch)
@@ -177,10 +174,10 @@ class Application
         return point;
     }    
 
-    /** @desc Показать событие пера */
-    ShowInfoTouchEvent(Event)
-    {
-        /* Событие содержит массив касаний полотна 
+    /** 
+        Показать событие пера*/
+    /*
+        Событие содержит массив касаний полотна 
         changedTouches - массив объектов Touch
         touches - массив объектов Touch
         targetTouches - массив объектов Touch
@@ -190,6 +187,8 @@ class Application
             сlientX, сlientY  - координаты относительно viewport браузера
             pageX, pageY - координаты относительно документы с учтом скролинга документа. Используем их для расчета.
             target - htmlelemnt когда было первое касание даже если свдинули или удалили элемент
+
+        PageY = ClientY + ScrollY нужно складывать прокрутки для разных элементов
 
         Пример для одного касания:
         touch start - все три массива объектов touch содержат касание. информация о касании одинакова.
@@ -203,36 +202,63 @@ class Application
         
         Если нет скролинга, координаты верхнего левого угла холста совпадает с touch PageX,PageY
         При скролинге координаты холста меняются на величину скролинга. 
-        Тек поз Y = pageY - HolstRect.y;
-        */
+        Тек поз Y = pageY - HolstRect.y; */
+
+    ShowInfoTouchEvent(Event)
+    {
+
         
        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
 
-        let thInfo = Event.type + Util.PathToString(Event.path);
-        for(let i=0; i<Event.changedTouches.length; i++) 
+        let thInfo = "";
+        let tInfoNewline = "";
+
+        for(let i=0; i<Event.changedTouches.length; i++)
         {
             let t= Event.changedTouches[i];
 
-            thInfo += "<br>\n";
+            thInfo += tInfoNewline ;
+            
             let tx = t.pageX - HolstRect.left;
             let ty = t.pageY - HolstRect.top;
-            thInfo += 'tX=' + Math.round(tx) + '; tY=' +  Math.round(ty);
-            thInfo += '; Chg: id=' + t.identifier + ' scX=' + Math.round(t.screenX) + ' scY=' + Math.round(t.screenY) 
-            + '  | pgX=' + Math.round(t.pageX) + ' pgY=' + Math.round(t.pageY) + '  | clX=' + Math.round(t.clientX) + ' clY=' + Math.round(t.clientY);
-            
-            let ZZ = document.elementsFromPoint(t.clientX, t.clientY);            
-            for (let z=0; z<ZZ.length; z++)
-            {
-               // console.log(Util.ParentTreeToArray(ZZ[z]));
-            }
+            // координаты относительно вернего левого угла окна рабочей области браузера
+            let ZZ = document.elementsFromPoint(t.clientX, t.clientY);
 
+            thInfo += 'X=' + Math.round(tx) + ' Y=' +  Math.round(ty) + "; " + Event.type + " " + Util.PathToString(ZZ);
+           thInfo += '; Chg: id=' + t.identifier + /*' scX=' + Math.round(t.screenX) + ' scY=' + Math.round(t.screenY) + */
+            '  | pgX=' + Math.round(t.pageX) + ' pgY=' + Math.round(t.pageY) + '  | clX=' + Math.round(t.clientX) + ' clY=' + Math.round(t.clientY);
+
+            tInfoNewline = "<br>\n";
         }
-        thInfo += "<br>\nHolst X=" + Math.round(HolstRect.left) + ' Y=' + Math.round(HolstRect.top);
+
+        // thInfo += "<br>\nHolst X=" + Math.round(HolstRect.left) + ' Y=' + Math.round(HolstRect.top);
          //+ ' L='+HolstRect.left + ' T=' + HolstRect.top + ' W='+ HolstRect.width + ' H='+ HolstRect.height + ' R='+ HolstRect.right + ' B='+ HolstRect.bottom;
 
         this.LabelTouchInfo.SetValue(thInfo);        
 
-       //console.log(thInfo);
+    }
+
+    GetCoordinatesTouchEvent(Event)
+    {
+        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+
+        let thInfo = "";
+        let tInfoNewline = "";
+        for(let i=0; i<Event.changedTouches.length; i++) 
+        {
+            let t= Event.changedTouches[i];
+            if (t.identifier!=0) continue;
+            else 
+            {
+                let res = {};
+                res.X = t.pageX - HolstRect.left;
+                res.Y = t.pageY - HolstRect.top;
+                res.ClientX = t.clientX;
+                res.ClientY = t.clientY;
+                return res;
+            }
+        }
+        return null;
     }
    
 
@@ -241,7 +267,6 @@ class Application
     */        
     HolstOnMouseDown(Event)
     {
-        //console.log(Event.type);
         /*
             В событии от мыши координаты не учитывают скроллинг, масштабирование, сдвиг.
             Необходимо преобразовать их из координаты мыши, в координату холста с учетом скролиинга, масштабирования и сдвига
@@ -253,7 +278,7 @@ class Application
             Event.offsetY - координата Y от нуля холста
             Пересчет в координаты холста не требуется
          */
-        this.Holst.MouseDown(Event.offsetX, Event.offsetY, Event);
+        this.Holst.PenDown(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -261,9 +286,8 @@ class Application
     */        
     HolstOnMouseUp(Event)
     {
-        //console.log(Event.type, Event);
         this.ShowInfoMouseEvent(Event);
-        this.Holst.MouseUp(Event.offsetX, Event.offsetY, Event);       
+        this.Holst.PenUp(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);       
     } 
 
     /**
@@ -271,9 +295,8 @@ class Application
     */        
     HolstOnMouseMove(Event)
     {
-        //console.log(Event.type);
         this.ShowInfoMouseEvent(Event);
-        this.Holst.MouseMove(Event.offsetX, Event.offsetY, Event);
+        this.Holst.PenMove(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -282,8 +305,10 @@ class Application
    HolstOnTouchStart(Event)
     {
         Event.preventDefault();        
-        //console.log(Event.type, Event);
         this.ShowInfoTouchEvent(Event);
+        let coord = this.GetCoordinatesTouchEvent(Event);
+        if (coord==null) return;
+        this.Holst.PenDown(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
     }
 
     /**
@@ -292,8 +317,10 @@ class Application
    HolstOnTouchMove(Event)
     {
         Event.preventDefault();        
-        //console.log(Event.type, Event);
         this.ShowInfoTouchEvent(Event);
+        let coord = this.GetCoordinatesTouchEvent(Event);
+        if (coord==null) return;
+        this.Holst.PenMove(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
     }
 
     /**
@@ -304,6 +331,9 @@ class Application
         Event.preventDefault();
         //console.log(Event.type, Event);
         this.ShowInfoTouchEvent(Event);
+        let coord = this.GetCoordinatesTouchEvent(Event);
+        if (coord==null) return;
+        this.Holst.PenUp(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
     }
 
     HolstOnKeyDown(Event)

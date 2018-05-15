@@ -6,7 +6,7 @@ class EditorEvent
      * 
      * @param {EditorEventType} evnttype
      */
-    contructor (evnttype)
+    constructor (evnttype)
     {
         /** @type {EditorEventType) тип события */
         this.Type = evnttype;
@@ -17,8 +17,17 @@ class EditorEvent
         /** @type {number} Y координата относительно бумаги холста */
         this.Y = 0;
 
+        /** @type {number} X координата относительно клиентской области браузера */
+        this.ClientX = 0;
+        
+        /** @type {number} Y координата относительно клиентской области браузера */
+        this.ClientY = 0;
+        
         /** @type {Event} исходное событие */
-        this.SourceEvent = null; 
+        this.SourceEvent = null;
+
+        this.TopFigure = null;
+        this.TopElement= null;
     }
 
 
