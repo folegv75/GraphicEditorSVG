@@ -66,6 +66,8 @@ class Application
        this.Holst.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
        this.Holst.SetOnTouchMove(this.HolstOnTouchMove.bind(this), false);
        this.Holst.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), false);
+       this.Holst.SetOnTouchCancel(this.HolstOnTouchCancel.bind(this), false);
+       
        this.Holst.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
 
        let el = document.getElementById(Const.HolstContainerId);
@@ -334,6 +336,11 @@ class Application
         let coord = this.GetCoordinatesTouchEvent(Event);
         if (coord==null) return;
         this.Holst.PenUp(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+    }
+
+    HolstOnTouchCancel(Event)
+    {
+
     }
 
     HolstOnKeyDown(Event)

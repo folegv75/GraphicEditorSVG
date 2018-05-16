@@ -55,7 +55,13 @@ class BaseControl
     {
         this.OnTouchEnd = proclink;
         this.SelfElem.addEventListener('touchend',proclink, option);
-	}
+    }
+
+    SetOnTouchCancel(proclink, option)
+    {
+        this.OnTouchEnd = proclink;
+        this.SelfElem.addEventListener('touchcancel',proclink, option);
+	}    
     
 	SetOnKeyDown(proclink)
     {
