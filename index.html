@@ -5,6 +5,7 @@
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
 	<title>Редактор фигур</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">	
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 
 	<script src="jslib/FileSaver.js"></script>
@@ -21,38 +22,26 @@
 	</div>
 <div class='main-window'>
 		<div class='menu border'>
-			<div>
-					<label for="btnSelect" class="menu-button aBtn">Выбор</label>
+			<div class="menu-button">
+				<label for="btnSelect" class="toolBtn"><span class='icon icon--select'></span></label>
 				<input type="button"  id='btnSelect' hidden>
 			</div>
-			<div>
-					<label for="btnRectangle" class="menu-button aBtn">Прямоугольник</label>
+			<div class="menu-button">
+				<label for="btnRectangle" class="toolBtn"><i class="material-icons">crop_square</i></label>
 				<input type="button"  id='btnRectangle' hidden>
+				<label for="btnLine" class="toolBtn"><i class="material-icons">transform</i></label>
+				<input type="button" id='btnLine' hidden>
 			</div>
-		<!--		
-			<div>
-				<input type="button" value='Круг' class='menu-button' id='btnCircle' />
-			</div>
-			<div>
-				<input type="button" value='Текст' class='menu-button' id='btnText' />
-			</div>
-		-->
-			<div>
-					<label for="btnLine" class="menu-button aBtn">Линия</label>
-					<input type="button" id='btnLine' hidden>
-			</div>
-			<div>
-					<label for="your-files-save" class="menu-button aBtn">Сохранить файл</label>
-					<input type="button" id="your-files-save" hidden/>
-			</div>
-			<div>
-					<label for="your-files" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
+			<div class="menu-button">
+					<label for="your-files-save" class="toolBtn"><span class="icon icon--download"></span></label>
+					<input type="button" id="your-files-save" hidden>
+					<label for="your-files" class="toolBtn" id="your-files-drag"><span class="icon icon--upload"></span></label>
 					<input type="file" name="upload" id="your-files" hidden>
 			</div>
 
 
 			<div>
-				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Спецификация SVG</a>
+				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">SVG</a>
 			</div>
 			<div id='info'></div>
 		</div>

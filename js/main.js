@@ -1,18 +1,22 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 var MainApp = null;
 
-class Application 
+class Application  extends BaseControl
 {
-	constructor()
+	constructor(id)
 	{
+        super(id);
+
+        //Запуск работы системы
+        this.EditorState = new EditorState();
+        
 
         this.LabelTouchInfo = new Label(Const.LabelTouchInfo);
         this.LabelMouseInfo = new Label(Const.LabelMouseInfo);
+        
+        this.PanelMode = new PanelModeControl(Const.PanelModeId, this.EditorState);
 
-        this.ButtonSelect = new Button(Const.BtnSelectId);
-        this.ButtonRectangle = new Button(Const.BtnRectangleId);
-        this.ButtonLine = new Button(Const.BtnLineId);
         this.ButtonSaveFile = new Button(Const.BtnSaveFileId);
         this.ButtonLoadFile = new Button(Const.BtnLoadFileId);
 
@@ -38,8 +42,6 @@ class Application
 
         this.InitEventListener();
         
-        //Запуск работы системы
-        //SelectClick();
         
     }        
 
@@ -49,26 +51,24 @@ class Application
     {
         document.addEventListener("keydown",this.OnKeyDown);
 
-       this.ButtonSelect.SetOnClick(this.ButtonSelectOnClick.bind(this));
        this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
        this.ButtonLoadFile.SetOnClick(this.ButtonLoadFileOnClick.bind(this));
-       this.ButtonRectangle.SetOnClick(this.ButtonRectangleOnClick.bind(this));
-       this.ButtonLine.SetOnClick(this.ButtonLineOnClick.bind(this));
-
-       this.Holst.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
-       this.Holst.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
-       this.Holst.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
+       
+       this.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
+       this.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
+       this.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
+       //document.addEventListener('mousemove',this.HolstOnMouseMove.bind(this))
 
        /*   Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
             В нем будем вся последовательность тегов, на которым двигается мышь
        */
 
-       this.Holst.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
-       this.Holst.SetOnTouchMove(this.HolstOnTouchMove.bind(this), false);
-       this.Holst.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), false);
-       this.Holst.SetOnTouchCancel(this.HolstOnTouchCancel.bind(this), false);
+       this.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
+       this.SetOnTouchMove(this.HolstOnTouchMove.bind(this), false);
+       this.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), false);
+       this.SetOnTouchCancel(this.HolstOnTouchCancel.bind(this), false);
        
-       this.Holst.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
+       this.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
 
        let el = document.getElementById(Const.HolstContainerId);
        el.addEventListener("scroll",this.onScroll.bind(this));
@@ -108,13 +108,6 @@ class Application
         console.log('KeyDown:',Event.key);
     }
 
-    /**
-    * @param {MouseEvent} Event
-    */        
-    ButtonSelectOnClick(Event)
-    {
-    console.log('ButtonSelectOnClick');
-    }
 
     /**
     * @param {MouseEvent} Event
@@ -132,21 +125,6 @@ class Application
         console.log('ButtonLoadFileOnClick');
     }
    
-    /**
-    * @param {MouseEvent} Event
-    */        
-    ButtonRectangleOnClick(Event)
-    {
-        console.log('ButtonRectangleOnClick');
-    }
-  
-    /**
-    * @param {MouseEvent} Event
-    */        
-    ButtonLineOnClick(Event)
-    {
-        console.log('ButtonLineOnClick');
-    } 
 
     /** @desc Показать событие пера */   
     ShowInfoMouseEvent(Event)
@@ -155,7 +133,8 @@ class Application
         let ofsy = '';
         if (Event.offsetX!=undefined) ofsx = Event.offsetX;
         if (Event.offsetY!=undefined) ofsy = Event.offsetY;
-        let pv = "X="+ofsx+" Y=" + ofsy + " " + Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
+        let pv = "ofsX="+ofsx+" ofsY=" + ofsy + " clX=" + Event.clientX + " clY=" + Event.clientY + " " + 
+            Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
         this.LabelMouseInfo.SetValue(pv);
     }
 
@@ -208,7 +187,6 @@ class Application
 
     ShowInfoTouchEvent(Event)
     {
-
         
        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
 
@@ -269,18 +247,14 @@ class Application
     */        
     HolstOnMouseDown(Event)
     {
-        /*
-            В событии от мыши координаты не учитывают скроллинг, масштабирование, сдвиг.
-            Необходимо преобразовать их из координаты мыши, в координату холста с учетом скролиинга, масштабирования и сдвига
-            скролинг учитывается внутри svg
-        */
         this.ShowInfoMouseEvent(Event);
 
-        /*  Event.offsetX - координата X от нуля холста
-            Event.offsetY - координата Y от нуля холста
-            Пересчет в координаты холста не требуется
+        /* Пересчет в координаты холста оносительно окна html
          */
-        this.Holst.PenDown(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);
+        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+        let x = Math.round(Event.clientX - HolstRect.left);
+        let y = Math.round(Event.clientY - HolstRect.top);
+        this.Holst.PenDown(x, y, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -289,7 +263,10 @@ class Application
     HolstOnMouseUp(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        this.Holst.PenUp(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);       
+        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+        let x = Math.round(Event.clientX - HolstRect.left);
+        let y = Math.round(Event.clientY - HolstRect.top);
+        this.Holst.PenUp(x, y, Event.clientX, Event.clientY, Event);       
     } 
 
     /**
@@ -298,7 +275,11 @@ class Application
     HolstOnMouseMove(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        this.Holst.PenMove(Event.offsetX, Event.offsetY, Event.clientX, Event.clientY, Event);
+        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+
+        let x = Math.round(Event.clientX -  HolstRect.left);
+        let y = Math.round(Event.clientY -  HolstRect.top);
+        this.Holst.PenMove(x, y, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -357,7 +338,7 @@ class Application
 
 function ApplicationInit()
 {
-    MainApp = new Application(); 
+    MainApp = new Application(Const.MainApplication); 
 }
 
 window.onload = ApplicationInit;

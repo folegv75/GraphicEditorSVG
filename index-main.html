@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html id='Main-Application'>
 
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
@@ -19,6 +19,7 @@
 	<script src="js/holst-contaier.js"></script>	
 	<script src="js/holst.js"></script>
 	<script src="js/zoom-manager.js"></script>
+	<script src="js/editor-state.js"></script>
 
 	<script src="js/main.js"></script>
 </head>
@@ -37,59 +38,48 @@
 	</div>
 <div class='main-window'>
 		<div class='menu border'>
-			<div>
-					<label for="btnSelect" class="menu-button aBtn">Выбор</label>
+			<div class="menu-button">
+					<label for="btnSelect" class="toolBtn" title='Выбор'><span class='icon icon--select'></span></label>
 				<input type="button"  id='btnSelect' hidden>
 			</div>
-			<div>
-					<label for="btnRectangle" class="menu-button aBtn">Прямоугольник</label>
+			<div class="menu-button" id='panel-mode'>
+				<label for="btnRectangle" class="toolBtn" title='Фигура'><i class="material-icons">crop_square</i></label>
 				<input type="button"  id='btnRectangle' hidden>
+				<label for="btnLine" class="toolBtn" title='Коннектор'><i class="material-icons">transform</i></label>
+				<input type="button" id='btnLine' hidden>
 			</div>
-		<!--		
-			<div>
-				<input type="button" value='Круг' class='menu-button' id='btnCircle' />
-			</div>
-			<div>
-				<input type="button" value='Текст' class='menu-button' id='btnText' />
-			</div>
-		-->
-			<div>
-					<label for="btnLine" class="menu-button aBtn">Линия</label>
-					<input type="button" id='btnLine' hidden>
-			</div>
-			<div>
-					<label for="btnSaveFile" class="menu-button aBtn">Сохранить файл</label>
-					<input type="button" id="btnSaveFile" hidden/>
-			</div>
-			<div>
-					<label for="btnLoadFile" class="menu-button aBtn" id="your-files-drag">Нажмите или перетащите сюда файл для загрузки</label>
+			<div class="menu-button">
+					<label for="btnSaveFile" class="toolBtn" title='Сохранить в файл'><span class="icon icon--download"></span></label>
+					<input type="button" id="btnSaveFile" hidden>
+					<label for="btnLoadFile" class="toolBtn" title='Загрузить из файла' id="your-files-drag"><span class="icon icon--upload"></label>
 					<input type="file" name="upload" id="btnLoadFile" hidden>
 			</div>
-			<div>
 					<div class="menu-button">
-						<label for="btnViewMoveLeft" class="toolBtn"><i class="material-icons">arrow_back</i></label>
+						<label for="btnViewMoveLeft" class="toolBtn" title='Сдвинуть влево'><i class="material-icons">arrow_back</i></label>
 						<input type="button" id="btnViewMoveLeft" hidden>
-						<label for="btnViewMoveRight" class="toolBtn"><i class="material-icons">arrow_forward</i></label>
+						<label for="btnViewMoveRight" class="toolBtn" title='Сдвинуть вправо'><i class="material-icons">arrow_forward</i></label>
 						<input type="button" id="btnViewMoveRight" hidden>
-						<label for="btnViewMoveUp" class="toolBtn"><i class="material-icons">arrow_upward</i></label>
+					</div>
+					<div class="menu-button">
+						
+						<label for="btnViewMoveUp" class="toolBtn" title='Сдвинуть вверх'><i class="material-icons">arrow_upward</i></label>
 						<input type="button" id="btnViewMoveUp" hidden>
-						<label for="btnViewMoveDown" class="toolBtn"><i class="material-icons">arrow_downward</i></label>
+						<label for="btnViewMoveDown" class="toolBtn" title='Сдвинуть вниз'><i class="material-icons">arrow_downward</i></label>
 						<input type="button" id="btnViewMoveDown" hidden>
 					</div>
 					<div class="menu-button">
-						<label for="btnViewZoomIn" class="toolBtn"><i class="material-icons">zoom_in</i></label>
+						<label for="btnViewZoomIn" class="toolBtn" title='Увеличить'><i class="material-icons">zoom_in</i></label>
 						<input type="button" id="btnViewZoomIn" hidden>
-						<label for="btnViewZoomNone" class="toolBtn"><i class="material-icons">zoom_out_map</i></label>
-						<input type="button" id="btnViewZoomNone" hidden>
-						<label for="btnViewZoomOut" class="toolBtn"><i class="material-icons">zoom_out</i></label>
+						<label for="btnViewZoomOut" class="toolBtn" title='Уменьшить'><i class="material-icons">zoom_out</i></label>
 						<input type="button" id="btnViewZoomOut" hidden>
 					</div>
-					
-			</div>
+					<div class="menu-button">						
+						<label for="btnViewZoomNone" class="toolBtn" title='Масштаб 100%'><i class="material-icons">zoom_out_map</i></label>
+						<input type="button" id="btnViewZoomNone" hidden>
+					</div>
 
-
-			<div>
-				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank">Спецификация SVG</a>
+			<div class="menu-button">
+				<a href="https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html" target="_blank" title='Перейти к спецификации SVG'>SVG</a>
 			</div>
 			<div id='idInfo'></div>
 		</div>

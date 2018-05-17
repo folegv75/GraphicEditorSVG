@@ -4,6 +4,8 @@ var xmlns = "http://www.w3.org/2000/svg";
 
 // Инициализация констант
 var Const = {};
+Const.MainApplication = 'Main-Application';
+
 Const.HolstContainerId = 'holst-container';
 Const.HolstId = 'Holst';
 Const.PaperId = 'HolstPaper';
@@ -19,10 +21,12 @@ Const.LabelTouchInfo = 'lblTouchInfo';
 Const.LabelMouseInfo = 'lblMouseInfo';
 Const.LabelStatusInfo = 'lblStatusInfo';
 
-
+Const.PanelModeId= 'panel-mode';
 Const.BtnSelectId = 'btnSelect';
 Const.BtnRectangleId = 'btnRectangle';
 Const.BtnLineId = 'btnLine';
+Const.ClassCurrentButton = 'currentbtn';
+
 Const.BtnSaveFileId = 'btnSaveFile';
 Const.BtnLoadFileId = 'btnLoadFile';
 
@@ -34,6 +38,8 @@ Const.BtnViewZoomInId = 'btnViewZoomIn';
 Const.BtnViewZoomNoneId = 'btnViewZoomNone';
 Const.BtnViewZoomOutId = 'btnViewZoomOut';
 
+
+/* определения типов */
 /** 
     desc Тип направления линейки
 */
@@ -43,6 +49,8 @@ RulerType.Horizontal = 'horizontal';
 /** @desc Вертикальная линейка */
 RulerType.Vertical = 'vertical';
 
+
+
 /** typedef {EditorEventType}
     @property {string} PenDown Перо опущено
 */
@@ -51,3 +59,8 @@ EditorEventType.PenDown = 'pendown';
 EditorEventType.PenUp = 'penup';
 EditorEventType.PenMove = 'penmove';
 
+/** Режим редактора */
+var EditorMode = {};
+EditorMode.Select = 'select';
+EditorMode.Figure = 'figure';
+EditorMode.Connector = 'connector';

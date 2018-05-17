@@ -25,7 +25,9 @@ class Holst extends BaseControl
 	}
 
 
-
+	/** обработка изменения координата пера и генерация события
+	 * @param
+	 */
 	PenChange(x, y, clientx, clienty, sourceEvent, evtype)
 	{
 
@@ -69,6 +71,11 @@ class Holst extends BaseControl
 	PenMove(x, y, clientx, clienty, sourceEvent)
 	{
 		this.PenChange(x, y, clientx, clienty, sourceEvent, EditorEventType.PenMove);
+	}
+
+	PenMove2(x, y, clientx, clienty, sourceEvent)
+	{
+		//this.PenChange(x, y, clientx, clienty, sourceEvent, EditorEventType.PenMove);
 	}
 
 	// Найти верхнюю фигуру. Фигура это элемент <g>, у которого есть tag 'figuretype' 'figure' или  'connector'
