@@ -4,9 +4,10 @@ var xmlns = "http://www.w3.org/2000/svg";
 
 // Инициализация констант
 var Const = {};
-Const.MainApplication = 'Main-Application';
+Const.MainApplicationId = 'Main-Application';
+Const.MainWindowId = 'mainwindow';
+Const.MainMenuId = 'mainmenu';
 
-Const.HolstContainerId = 'holst-container';
 Const.HolstId = 'Holst';
 Const.PaperId = 'HolstPaper';
 

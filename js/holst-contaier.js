@@ -8,10 +8,10 @@ class HolstContainer
 		this.SelfElem = document.getElementById(Id); 
 	}
     
-    SetMainWindowSize()
+    DeleteSetMainWindowSize()
     {
-        this.SelfElem.style.width = (window.innerWidth - 270) + "px";
-        this.SelfElem.style.height = window.innerHeight-200 + "px";
+        /*this.SelfElem.style.width = (window.innerWidth - 270) + "px";*/
+        /*this.SelfElem.style.height = window.innerHeight-200 + "px";*/
     }
 	
 }

@@ -95,7 +95,8 @@ label {
 .toolBtn {
     border: 1px solid #333; /* Рамка */
     display: inline-block;
-    padding: 5px; /* Поля */
+	padding: 5px; /* Поля */
+	margin: 2px; /* границы */
     text-decoration: none; /* Убираем подчёркивание */
 	color: #000; /* Цвет текста */
     background: rgb(221,221,221); /* Градиент */
@@ -123,10 +124,6 @@ text:hover {
     color: #a00;
    }
    
-.border { 
-    /* background: #70809014; */
-    border: dashed 1px ; 
-}
   
 .holst {
 	display: inline-block;
@@ -137,24 +134,24 @@ text:hover {
 	height: 18px;
 }
 
+/* SVG не прокручивается */
 div.holst {
 	/* background: lightblue;	*/
-    overflow: scroll; /* Добавляем полосы прокрутки */
-	width:85%;
-	height:50%;
+    /*overflow: scroll; /* Добавляем полосы прокрутки */
+	/*width:85%;*/
+	/*height:50%;*/
     border: solid 1px lightgray; 
 	/*padding: 5px;*/
-	padding-right: 16px;
+	/*padding-right: 16px;*/
 	/*margin: 5px;*/
 }
 
-/*
-div.main-window {
-	 width:100%;
-	 height:100%;
-	 border: solid 1px red; 
+
+.main-window {
+	/* Размер шрифта 0 чтобы небыло отсупов между inline блоками*/
+	font-size: 0px;
 }
-*/
+
 
 .debug-info {
 	width:100%;
@@ -173,23 +170,15 @@ div.main-window {
 	width: 86px;
 }
    
-.menu-button {
-	margin-top: 5;
-	margin-bottom: 5;
-	margin-left: 5;
-	margin-right: 5;
+.menu-line {
+	margin-top: 2px;
+	margin-left: 2px;
 }
 
 .currentbtn {
    background-color: #dbeaf7
 }
 
-/*
-text {
-	cursor: default;
-	font-size: 10pt;
-	font-family: "Noto Sans", sans-serif;
-}*/
 
 textarea.input-field {
 	font-size: 10pt;
@@ -208,5 +197,6 @@ svg.ruler text {
 	
 	
 #Holst {
-	/*border: 1px dashed  lightgray;*/
+	border: 1px dashed  lightgray;
+	margin-left: 4px;
 }

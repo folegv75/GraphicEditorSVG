@@ -203,21 +203,21 @@ class ZoomControl
 	ButtonViewZoomInOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomIn();
-		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+		//this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
 		
 	}
 
 	ButtonViewZoomNoneOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomNone();
-		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+		//this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
 
 	}
 
 	ButtonViewZoomOutOnClick(Evnt)
 	{
 		this.ZoomManager.ViewZoomOut();
-		this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
+		//this.InfoLabel.SetValue('Zoom='+this.ZoomManager.ZoomKoef);
 
 	}
 

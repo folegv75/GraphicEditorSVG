@@ -36,46 +36,52 @@
 				<span class='info-label' id='lblTouchInfo'></span>
 			</div>
 	</div>
-<div class='main-window'>
-		<div class='menu border'>
-			<div class="menu-button">
+<div class='main-window' id='mainwindow'>
+		<div class='menu' id='mainmenu'>
+			<div class="menu-line">
 					<label for="btnSelect" class="toolBtn" title='Выбор'><span class='icon icon--select'></span></label>
 				<input type="button"  id='btnSelect' hidden>
 			</div>
-			<div class="menu-button" id='panel-mode'>
+			<div class="menu-line" id='panel-mode'>
 				<label for="btnRectangle" class="toolBtn" title='Фигура'><i class="material-icons">crop_square</i></label>
 				<input type="button"  id='btnRectangle' hidden>
 				<label for="btnLine" class="toolBtn" title='Коннектор'><i class="material-icons">transform</i></label>
 				<input type="button" id='btnLine' hidden>
 			</div>
-			<div class="menu-button">
+			<div class="menu-line">
 					<label for="btnSaveFile" class="toolBtn" title='Сохранить в файл'><span class="icon icon--download"></span></label>
 					<input type="button" id="btnSaveFile" hidden>
 					<label for="btnLoadFile" class="toolBtn" title='Загрузить из файла' id="your-files-drag"><span class="icon icon--upload"></label>
 					<input type="file" name="upload" id="btnLoadFile" hidden>
 			</div>
-					<div class="menu-button">
+					<div class="menu-line">
 						<label for="btnViewMoveLeft" class="toolBtn" title='Сдвинуть влево'><i class="material-icons">arrow_back</i></label>
 						<input type="button" id="btnViewMoveLeft" hidden>
 						<label for="btnViewMoveRight" class="toolBtn" title='Сдвинуть вправо'><i class="material-icons">arrow_forward</i></label>
 						<input type="button" id="btnViewMoveRight" hidden>
 					</div>
-					<div class="menu-button">
+					<div class="menu-line">
 						
 						<label for="btnViewMoveUp" class="toolBtn" title='Сдвинуть вверх'><i class="material-icons">arrow_upward</i></label>
 						<input type="button" id="btnViewMoveUp" hidden>
 						<label for="btnViewMoveDown" class="toolBtn" title='Сдвинуть вниз'><i class="material-icons">arrow_downward</i></label>
 						<input type="button" id="btnViewMoveDown" hidden>
 					</div>
-					<div class="menu-button">
+					<div class="menu-line">
 						<label for="btnViewZoomIn" class="toolBtn" title='Увеличить'><i class="material-icons">zoom_in</i></label>
 						<input type="button" id="btnViewZoomIn" hidden>
 						<label for="btnViewZoomOut" class="toolBtn" title='Уменьшить'><i class="material-icons">zoom_out</i></label>
 						<input type="button" id="btnViewZoomOut" hidden>
 					</div>
-					<div class="menu-button">						
+					<div class="menu-line">						
 						<label for="btnViewZoomNone" class="toolBtn" title='Масштаб 100%'><i class="material-icons">zoom_out_map</i></label>
 						<input type="button" id="btnViewZoomNone" hidden>
+					</div>
+					<div class="menu-line">						
+						<label for="btnTestA" class="toolBtn" title='Масштаб 100%'>A</label>
+						<input type="button" id="btnTestA" hidden>
+						<label for="btnTestB" class="toolBtn" title='Масштаб 100%'>B</label>
+						<input type="button" id="btnTestB" hidden>
 					</div>
 
 			<div class="menu-button">
@@ -84,10 +90,9 @@
 			<div id='idInfo'></div>
 		</div>
 		
-		<div class='holst' id='holst-container'>
 
-			<svg width='1500' height='1500' id="Holst">
-				<svg debug-class='' width="1500" height="1500" id="HolstPaper" viewBox="-30 -30 1500 1500">
+			<svg width='100' height='100' id="Holst">
+					<svg debug-class='' width="1500" height="1500" id="HolstPaper" viewBox="-30 -30 1500 1500">
 				
 					<g id="LayerGrid" stroke="lightgray" stroke-width="1"/>
 					<g id='LayerLines'>
@@ -109,15 +114,13 @@
 							<circle cx="90" cy="90" r="40" fill='green' stroke="red" stroke-width="2" opacity='0.5'/>
 						</g>
 					</g>
-				</svg>			
+				</svg>		
 				
 				<svg class='ruler' width="1500" height="1500" id="ruler-h" viewBox="-30 0 1500 1500"/>
-					
 				<svg class='ruler' width="1500" height="1500" id="ruler-v" viewBox="0 -30 1500 1500"/>
 
 			</svg>
 
-			</div>
 
 	</div>
 

@@ -11,8 +11,21 @@ class Holst extends BaseControl
 
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
 		this.Paper = document.getElementById(Const.PaperId);
+
+        this.Grid = new Grid(Const.GridId, 0, 0, 1500,1500);
+        this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, 0, 1500);
+        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, 1500);
+		
+        MainApp.ZoomManager.AppendView(this);
 	}
 
+	SetSize(Width, Height)
+	{
+        this.SelfElem.style.width = Width + "px";
+        this.SelfElem.style.height = Height + "px";
+	}
+
+	
 	/** @param {EditorEvent}  editorEvent*/
 	ShowEventInStatusInfo(editorEvent)
 	{
@@ -26,7 +39,8 @@ class Holst extends BaseControl
 
 
 	/** обработка изменения координата пера и генерация события
-	 * @param
+	 * @param x {number} координата X относительно нуля холста
+	 * @param y {number} координата Y относительно нуля холста
 	 */
 	PenChange(x, y, clientx, clienty, sourceEvent, evtype)
 	{
@@ -112,6 +126,10 @@ class Holst extends BaseControl
 	{
 		let value = '' + (left-30) + ' ' + (top-30) + ' ' + width + ' ' + height;
 		this.Paper.setAttributeNS(null,'viewBox', value);
+        this.Grid.SetViewBoxSize(left, top, width, height);
+        this.RulerHorizontal.SetViewBoxSize(left, top, width, height);
+        this.RulerVertical.SetViewBoxSize(left, top, width, height);
+
 	}
 	
 }

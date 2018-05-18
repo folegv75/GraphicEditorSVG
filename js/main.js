@@ -7,8 +7,18 @@ class Application  extends BaseControl
 	constructor(id)
 	{
         super(id);
+    }
 
-        //Запуск работы системы
+    Init() {
+        /* Тестовые кнопки */
+        this.TestA = new Button('btnTestA');
+        this.TestA.SetOnClick(this.TestAOnClick.bind(this));
+        this.TestB = new Button('btnTestB');
+        this.TestB.SetOnClick(this.TestBOnClick.bind(this));
+
+        this.ZoomManager = new ZoomManager(0, 0, 1500, 1500);
+        this.ZoomControl = new ZoomControl(this.ZoomManager);
+        
         this.EditorState = new EditorState();
         
 
@@ -22,28 +32,26 @@ class Application  extends BaseControl
 
         this.Holst = new Holst(Const.HolstId);
 
-        this.Grid = new Grid(Const.GridId, 0, 0, 1500,1500);
-        this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, 0, 1500);
-        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, 1500);
-
-       
-        this.ZoomManager = new ZoomManager(0, 0, 1500, 1500);
-        this.ZoomControl = new ZoomControl(this.ZoomManager);
-
-        
-        this.ZoomManager.AppendView(this.Holst);
-        this.ZoomManager.AppendView(this.Grid);
-        this.ZoomManager.AppendView(this.RulerHorizontal);
-        this.ZoomManager.AppendView(this.RulerVertical);
-
-
-        this.HolstContainer = new HolstContainer(Const.HolstContainerId);
-        this.HolstContainer.SetMainWindowSize();
+        this.OnResizeMainWindow();
 
         this.InitEventListener();
         
         
-    }        
+    }   
+    
+    /** обработка нажатий тестовых кнопок */
+    TestAOnClick(Event)
+    {
+        console.log('TestA');
+        //let elem = document.getElementById(Const.PaperId);
+        //elem.scrollTop = elem.scrollTop + 10;
+
+    }
+    TestBOnClick(Event)
+    {
+        console.log('TestB');
+        
+    }
 
     /** Создание обработчиков подисок на событие
     */        
@@ -70,22 +78,12 @@ class Application  extends BaseControl
        
        this.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
 
-       let el = document.getElementById(Const.HolstContainerId);
-       el.addEventListener("scroll",this.onScroll.bind(this));
    
        window.onbeforeunload = this.OnExit.bind(this);
        window.onresize = this.OnResizeMainWindow.bind(this);
        
     }
 
-    /**
-    * @param {ScrollEvent} Evnt
-    */  
-    onScroll(Evnt)
-    {
-        //this.ZoomManager.SetViewBoxSize();
-        this.ShowInfoMouseEvent(Evnt);
-    }
 
     OnExit() 
     {
@@ -95,7 +93,27 @@ class Application  extends BaseControl
 
     OnResizeMainWindow()
     {
-        this.HolstContainer.SetMainWindowSize();
+        /* Здесь нужно менять размеры самого холста */
+        /* Получаем максимально доступную ширину и высоту окна */
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        /* В строке три элементы body main-window menu host. Для получения ширины Holst вычтем из максимуму ширину остальных элементов строки/
+            При определении ширины элементов необходимо учитывать отступы (margin) и границы (border)
+        */
+       /* Пойдем по короткому пути, т.к. значения нам известны и менять мы их не будем.
+       let elemBody = document.querySelector('body');
+       let elemMainWindow = document.getElementById(Const.MainWindowId);
+       let elemMenu = document.getElementById(Const.MainMenuId);
+       let elemHolst = document.getElementById(Const.HolstId);
+        */
+
+        /* margin body 8 + 8 + ширина меню 86 + бордюр меню 1 + 1 + отступ холста 4 + бордюр холста 1 + 1  Скроллер справ 17*/
+       let hW = W - 110 - 17;
+        /* margin body 8 + 8 + высота статус строк 18 + 36 + бордюр холста 1 + 1  */
+        let hH = H - 72;
+
+
+        this.Holst.SetSize(hW,hH);
     }
 
 
@@ -134,7 +152,7 @@ class Application  extends BaseControl
         if (Event.offsetX!=undefined) ofsx = Event.offsetX;
         if (Event.offsetY!=undefined) ofsy = Event.offsetY;
         let pv = "ofsX="+ofsx+" ofsY=" + ofsy + " clX=" + Event.clientX + " clY=" + Event.clientY + " " + 
-            Event.type + Util.PathToString(Event.path) + ' Scroll=' + this.HolstContainer.SelfElem.scrollTop;
+            Event.type + Util.PathToString(Event.path);
         this.LabelMouseInfo.SetValue(pv);
     }
 
@@ -240,6 +258,16 @@ class Application  extends BaseControl
         }
         return null;
     }
+
+    /** Пересчт в координаты холста */
+    GetCoordinatesMouseEvent(Event)
+    {
+        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
+        let point = {};
+        point.X = Math.round(Event.clientX - HolstRect.left);
+        point.Y = Math.round(Event.clientY - HolstRect.top);
+        return point;
+    }
    
 
     /**
@@ -248,13 +276,8 @@ class Application  extends BaseControl
     HolstOnMouseDown(Event)
     {
         this.ShowInfoMouseEvent(Event);
-
-        /* Пересчет в координаты холста оносительно окна html
-         */
-        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
-        let x = Math.round(Event.clientX - HolstRect.left);
-        let y = Math.round(Event.clientY - HolstRect.top);
-        this.Holst.PenDown(x, y, Event.clientX, Event.clientY, Event);
+        let point = this.GetCoordinatesMouseEvent(Event);
+        this.Holst.PenDown(point.Y, point.Y, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -263,10 +286,8 @@ class Application  extends BaseControl
     HolstOnMouseUp(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
-        let x = Math.round(Event.clientX - HolstRect.left);
-        let y = Math.round(Event.clientY - HolstRect.top);
-        this.Holst.PenUp(x, y, Event.clientX, Event.clientY, Event);       
+        let point = this.GetCoordinatesMouseEvent(Event);
+        this.Holst.PenUp(point.X, point.Y, Event.clientX, Event.clientY, Event);       
     } 
 
     /**
@@ -275,11 +296,8 @@ class Application  extends BaseControl
     HolstOnMouseMove(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        let HolstRect = this.Holst.SelfElem.getBoundingClientRect();
-
-        let x = Math.round(Event.clientX -  HolstRect.left);
-        let y = Math.round(Event.clientY -  HolstRect.top);
-        this.Holst.PenMove(x, y, Event.clientX, Event.clientY, Event);
+        let point = this.GetCoordinatesMouseEvent(Event);
+        this.Holst.PenMove(point.X, point.Y, Event.clientX, Event.clientY, Event);
     } 
 
     /**
@@ -338,7 +356,8 @@ class Application  extends BaseControl
 
 function ApplicationInit()
 {
-    MainApp = new Application(Const.MainApplication); 
+    MainApp = new Application(Const.MainApplicationId); 
+    MainApp.Init();
 }
 
 window.onload = ApplicationInit;
