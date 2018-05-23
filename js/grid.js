@@ -23,39 +23,42 @@ class Grid extends Layer
  
         let gridpath = document.createElementNS(xmlns, "path");
         let pathd = "";
-        for(let x = this.ShiftX; x<this.Width+this.ShiftX; x+=this.StepHorizontal)
+
+        for(let x = this.zLeft; x<this.zRight; x+=this.StepHorizontal)
         {
-            pathd += "M " + x + " " + this.ShiftY + " L " + x + " " + (this.Height+this.ShiftY) + " ";
+            pathd += "M " + x + " " + this.zTop + " L " + x + " " + this.zBottom + " ";
         }
-        for(let y = this.ShiftY; y<this.Height+this.ShiftY; y+=this.StepVertical)
+
+       
+        for(let y = this.zTop; y<this.zBottom; y+=this.StepVertical)
         {
-            pathd += "M " + this.ShiftX + " " + y + " L " + (this.Width+this.ShiftX) + " " + y + " ";
+            pathd += "M " + this.zLeft + " " + y + " L " + this.zRight + " " + y + " ";
         }
 
         let gridcircle = document.createElementNS(xmlns, "circle");
-        gridcircle.setAttributeNS(null, "cx", this.ShiftX);
-        gridcircle.setAttributeNS(null, "cy", this.ShiftY);
+        gridcircle.setAttributeNS(null, "cx", this.zLeft);
+        gridcircle.setAttributeNS(null, "cy", this.zTop);
         gridcircle.setAttributeNS(null, "r", 4);
         gridcircle.setAttributeNS(null, "fill", 'red');
         gridcircle.setAttributeNS(null, "stroke", 'red');
 
         let gridcircle2 = document.createElementNS(xmlns, "circle");
-        gridcircle2.setAttributeNS(null, "cx", (this.Width+this.ShiftX)*this.Zoom);
-        gridcircle2.setAttributeNS(null, "cy", this.ShiftY);
+        gridcircle2.setAttributeNS(null, "cx", this.zRight);
+        gridcircle2.setAttributeNS(null, "cy", this.zTop);
         gridcircle2.setAttributeNS(null, "r", 4);
         gridcircle2.setAttributeNS(null, "fill", 'red');
         gridcircle2.setAttributeNS(null, "stroke", 'red');
 
         let gridcircle3 = document.createElementNS(xmlns, "circle");
-        gridcircle3.setAttributeNS(null, "cx", this.ShiftX);
-        gridcircle3.setAttributeNS(null, "cy", this.Height+this.ShiftY);
+        gridcircle3.setAttributeNS(null, "cx", this.zLeft);
+        gridcircle3.setAttributeNS(null, "cy", this.zBottom);
         gridcircle3.setAttributeNS(null, "r", 4);
         gridcircle3.setAttributeNS(null, "fill", 'red');
         gridcircle3.setAttributeNS(null, "stroke", 'red');
 
         let gridcircle4 = document.createElementNS(xmlns, "circle");
-        gridcircle4.setAttributeNS(null, "cx", this.Width+this.ShiftX);
-        gridcircle4.setAttributeNS(null, "cy", this.Height+this.ShiftY);
+        gridcircle4.setAttributeNS(null, "cx", this.zRight);
+        gridcircle4.setAttributeNS(null, "cy", this.zBottom);
         gridcircle4.setAttributeNS(null, "r", 4);
         gridcircle4.setAttributeNS(null, "fill", 'red');
         gridcircle4.setAttributeNS(null, "stroke", 'red');

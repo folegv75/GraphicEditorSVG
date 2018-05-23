@@ -11,15 +11,16 @@ class Holst extends BaseControl
 
 		this.RulerWidth=30;
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
-		this.Paper = new Paper(Const.PaperId, this.RulerWidth, this.RulerWidth, 1500,1500, 0,0);
+		let StartWidth = 1500;
 
-
-		this.Grid = new Grid(Const.GridId, this.RulerWidth, this.RulerWidth, 1500,1500, 0,0);
+		this.Grid = new Grid(Const.GridId, this.RulerWidth, this.RulerWidth, StartWidth,StartWidth, 0,0);
 		this.Grid.Show();
-		this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, this.RulerWidth,0, 1500, this.RulerWidth, 0,0);
+		this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, this.RulerWidth,0, StartWidth, this.RulerWidth, 0,0);
 		this.RulerHorizontal.Show();
-        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, this.RulerWidth, this.RulerWidth, 1500, 0,0);
+        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, this.RulerWidth, this.RulerWidth, StartWidth, 0,0);
 		this.RulerVertical.Show();
+		this.Paper = new Paper(Const.PaperId, this.RulerWidth, this.RulerWidth, StartWidth,StartWidth, 0,0);
+		this.Paper.Show();
 		
         MainApp.ZoomManager.AppendView(this);
 	}
@@ -46,10 +47,18 @@ class Holst extends BaseControl
         this.Grid.ShiftX = shiftX;
 		this.Grid.ShiftY = shiftY;
 		this.Grid.Zoom = zoom;
-		this.RulerHorizontal.ShiftX = shiftX;
-        this.RulerVertical.ShiftY = shiftY;
+		
+		this.RulerHorizontal.Base = shiftX;
+		this.RulerHorizontal.Scale = 1/zoom;
+		this.RulerHorizontal.Show();
+		
+		this.RulerVertical.Base = shiftY;
+		this.RulerVertical.Scale = 1/zoom;
+		this.RulerVertical.Show();
+
         this.Paper.ShiftX = shiftX;
         this.Paper.ShiftY = shiftY;
+		this.Paper.Zoom = zoom;
 	}
 	
 	

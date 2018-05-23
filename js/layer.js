@@ -26,7 +26,7 @@ class Layer extends BaseControl
         this.xZoom = 1;
         this.xVisible = false;
         this.SetViewBoxSize();
-    }
+    }    
 
     set Width(value) {
         this.xWidth = value;
@@ -85,6 +85,14 @@ class Layer extends BaseControl
         else this.Hide();
     }
 
+    /* Получение начальной позиции, ширины и высоты с учетом сдвига и масштабирования */
+    get zLeft() { return Math.round(this.ShiftX); }
+    get zTop() { return Math.round(this.ShiftY); }
+    get zRight() { return Math.round((this.ShiftX+this.Width)*this.xZoom); }
+    get zBottom() { return Math.round((this.ShiftY+this.Height)*this.xZoom); }
+    get zWidth() { return Math.round(this.Width * this.xZoom); }
+    get zHeight() { return Math.round(this.Height * this.xZoom); }
+
     /** Устанавливаем размеры и позицию слоя для элемента SVG */
     SetViewBoxSize()
     {
@@ -92,7 +100,7 @@ class Layer extends BaseControl
         this.SelfElem.setAttributeNS(null, 'y', this.Y);
         this.SelfElem.setAttributeNS(null, 'width', this.Width);
         this.SelfElem.setAttributeNS(null, 'height', this.Height);
-        this.SelfElem.setAttributeNS(null, 'viewBox', '' + (this.ShiftX*this.xZoom) + ' ' + (this.ShiftY*this.xZoom) + ' ' + (this.Width*this.xZoom) + ' ' + (this.Height*this.xZoom));
+        this.SelfElem.setAttributeNS(null, 'viewBox', '' + this.zLeft + ' ' + this.zTop + ' ' + this.zWidth + ' ' + this.zHeight);
         if (this.xVisible) this.Show();
     }
     
