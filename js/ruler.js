@@ -1,136 +1,110 @@
 /*jshint esversion: 6 */
 
-class Ruler extends BaseControl
+class Ruler extends Layer
 {
-	constructor (id, rulertype, startpos, width)
+    constructor (id, rulertype, x, y, width, height, shiftX, shiftY)
 	{
-        super(id);
+        super (id, x, y, width, height, shiftX, shiftY);
         this.RulerType = rulertype;
         this.Dimension = 100;
         this.SubDimension = 50;
         this.DetailDimension = 10;
-        this.StartPosition = startpos;
-        this.EndPosition = startpos + width;
-        this.Base = 0;
-        this.Show();
-
     }
 
-    SetViewBoxSize(startX, startY, width, height)
-    {
-        if (this.RulerType == RulerType.Horizontal) 
-        {
-            this.StartPosition = startX;
-            this.EndPosition = startX + width;
-            //this.Base = startY;
-            let value = '' + (startX-30) + ' ' + 0 + ' ' + width + ' ' + height;
-            this.SelfElem.setAttributeNS(null,'viewBox', value);
-        } else
-        {
-            this.StartPosition = startY;
-            this.EndPosition = startY + height;
-            //this.Base = startX;
-            let value = '' + 0 + ' ' + (startY-30) + ' ' + width + ' ' + height;
-            this.SelfElem.setAttributeNS(null,'viewBox', value);
-        }
-        if (this.Visible) this.Show();
+    // SetViewBoxSize(startX, startY, width, height)
+    // {
+    //     if (this.RulerType == RulerType.Horizontal) 
+    //     {
+    //         this.StartPosition = startX;
+    //         this.EndPosition = startX + width;
+    //         //this.Base = startY;
+    //         let value = '' + (startX-30) + ' ' + 0 + ' ' + width + ' ' + height;
+    //         this.SelfElem.setAttributeNS(null,'viewBox', value);
+    //     } else
+    //     {
+    //         this.StartPosition = startY;
+    //         this.EndPosition = startY + height;
+    //         //this.Base = startX;
+    //         let value = '' + 0 + ' ' + (startY-30) + ' ' + width + ' ' + height;
+    //         this.SelfElem.setAttributeNS(null,'viewBox', value);
+    //     }
+    //     if (this.Visible) this.Show();
         
-    }
+    // }
     
     ShowHorizontal()
     {
-        let elem = document.getElementById(Const.HolstContainerId);
-        //this.Base = elem.scrollTop;
-        
-        let backgroundrect = document.createElementNS(xmlns, "rect");
-        backgroundrect.setAttributeNS(null,'stroke','none');
-        backgroundrect.setAttributeNS(null,'fill','white');
-        backgroundrect.setAttributeNS(null,'opacity','0.95');
-        backgroundrect.setAttributeNS(null,'x', this.StartPosition-30);
-        //if (elem.scrollTop==0) {
-            backgroundrect.setAttributeNS(null,'y', this.Base);
-            backgroundrect.setAttributeNS(null,'height','30');
-        // }
-        // else{
-        //     backgroundrect.setAttributeNS(null,'y', this.Base-5);
-        //     backgroundrect.setAttributeNS(null,'height','35');
-            
-        // }
-        backgroundrect.setAttributeNS(null,'width',this.EndPosition - this.StartPosition);
-        
+        // Выводим вертикальные полоски основных измерений и названия измерений
         let groupLine = document.createElementNS(xmlns, "g");
         groupLine.setAttributeNS(null,'stroke','black');
-
-
         let groupText = document.createElementNS(xmlns, "g");        
-        // Основные измерения с выводом значений
+
         let gridpath = document.createElementNS(xmlns, "path");
         let pathd = "";
-        for(let x = this.StartPosition; x<this.EndPosition; x+=this.Dimension)
+        
+        for(let x = this.ShiftX; x<this.Width+this.ShiftX; x+=this.Dimension)
         {
-            pathd += "M " + x + " " + (this.Base) + " L " + x + " " + (this.Base+30) + " ";
+            pathd += "M " + x + " " + this.ShiftY + " L " + x + " " + (this.Height+this.ShiftY) + " ";
             let elText = document.createElementNS(xmlns, "text");
             elText.innerHTML = x;
             elText.setAttributeNS(null, "x", x+2);
-            elText.setAttributeNS(null, "y", this.Base + 15);
+            elText.setAttributeNS(null, "y", 15+this.ShiftY);
             groupText.appendChild(elText);
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
 
+        // Выводим вертикальные полоски дополнительных  измерений
         // создаем под измерения
         gridpath = document.createElementNS(xmlns, "path");
         pathd = "";
-        for(let x = this.StartPosition; x<this.EndPosition; x+=this.SubDimension)
+        for(let x = this.ShiftX; x<this.Width+this.ShiftX; x+=this.SubDimension)
         {
-            pathd += "M " + x + " " + (this.Base+30) + " L " + x + " " + (this.Base+30-10) + " ";
+            pathd += "M " + x + " " + (this.Height+this.ShiftY) + " L " + x + " " + (this.Height-10+this.ShiftY) + " ";
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
  
-        // Создаем детальные измерения
+        // Выводим вертикальные полоски детальных  измерений
         gridpath = document.createElementNS(xmlns, "path");
         pathd = "";
-        for(let x = this.StartPosition; x<this.EndPosition; x+=this.DetailDimension)
+        for(let x = this.ShiftX; x<this.Width+this.ShiftX; x+=this.DetailDimension)
         {
-            pathd += "M " + x + " " +  (this.Base+30) + " L " + x + " " + (this.Base+30-5) + " ";
+            pathd += "M " + x + " " +  (this.Height+this.ShiftY) + " L " + x + " " + (this.Height-5+this.ShiftY) + " ";
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
 
-        this.SelfElem.appendChild(backgroundrect);
+        //this.SelfElem.appendChild(backgroundrect);
         this.SelfElem.appendChild(groupLine);
         this.SelfElem.appendChild(groupText);
     }
 
     ShowVertical()
     {
-        let backgroundrect = document.createElementNS(xmlns, "rect");
-        backgroundrect.setAttributeNS(null,'stroke','none');
-        backgroundrect.setAttributeNS(null,'fill','white');
-        backgroundrect.setAttributeNS(null,'opacity','0.95');
-        backgroundrect.setAttributeNS(null,'x', 0);
-        backgroundrect.setAttributeNS(null,'y',this.StartPosition-30);
-        backgroundrect.setAttributeNS(null,'width','30');
-        backgroundrect.setAttributeNS(null,'height',this.EndPosition - this.StartPosition);
-
+        // Основные измерения с выводом значений
         let groupLine = document.createElementNS(xmlns, "g");
         groupLine.setAttributeNS(null,'stroke','black');
 
         let groupText = document.createElementNS(xmlns, "g");
+        this.SelfElem.appendChild(groupText);
 
-        // Основные измерения с выводом значений
         let gridpath = document.createElementNS(xmlns, "path");
         let pathd = "";
-        for(let y = this.StartPosition; y<this.EndPosition; y+=this.Dimension)
+        for(let y = this.ShiftY; y<this.Height+this.ShiftY; y+=this.Dimension)
         {
-            pathd += "M " + (this.Base) + " " + y + " L " + (this.Base+30) + " " + y + " ";
+            pathd += "M " + this.ShiftX + " " + y + " L " + (this.Width+this.ShiftX) + " " + y + " ";
             let elText = document.createElementNS(xmlns, "text");
             elText.innerHTML = y;
-            elText.setAttributeNS(null, "x", this.Base + 15);
-            elText.setAttributeNS(null, "y", y-3);
-            elText.setAttributeNS(null, "transform", "rotate(270,"+this.Base + 15+"," + (y-3) + ")");
+            let x = 15;
+            elText.setAttributeNS(null, "x", x);
+            elText.setAttributeNS(null, "y", y);
             groupText.appendChild(elText);
+            let boundRect = elText.getBBox();
+            let newy = y+boundRect.width+1;
+            elText.setAttributeNS(null, "y", newy);
+            elText.setAttributeNS(null, "transform", "rotate(270," + x + "," + newy + ")");
+            
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
@@ -138,9 +112,9 @@ class Ruler extends BaseControl
         // создаем под измерения
         gridpath = document.createElementNS(xmlns, "path");
         pathd = "";
-        for(let y = this.StartPosition; y<this.EndPosition; y+=this.SubDimension)
+        for(let y = this.ShiftY; y<this.Height+this.ShiftY; y+=this.SubDimension)
         {
-            pathd += "M " + (this.Base+30) + " " + y + " L " + (this.Base+30-10) + " " + y + " ";
+            pathd += "M " + (this.Width+this.ShiftX) + " " + y + " L " + (this.Width-10+this.ShiftX) + " " + y + " ";
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
@@ -148,16 +122,14 @@ class Ruler extends BaseControl
         // Создаем детальные измерения
         gridpath = document.createElementNS(xmlns, "path");
         pathd = "";
-        for(let y = this.StartPosition; y<this.EndPosition; y+=this.DetailDimension)
+        for(let y = this.ShiftY; y<this.Height+this.ShiftY; y+=this.DetailDimension)
         {
-            pathd += "M " + (this.Base+30) + " " + y + " L " + (this.Base+30-5) + " " + y + " ";
+            pathd += "M " + (this.Width+this.ShiftX) + " " + y + " L " + (this.Width-5+this.ShiftX) + " " + y + " ";
         }
         gridpath.setAttributeNS(null, "d", pathd);
         groupLine.appendChild(gridpath);
 
-        this.SelfElem.appendChild(backgroundrect);
         this.SelfElem.appendChild(groupLine);
-        this.SelfElem.appendChild(groupText);
         
     }
     
@@ -166,14 +138,8 @@ class Ruler extends BaseControl
         this.SelfElem.innerHTML = "";
         if (this.RulerType == RulerType.Horizontal) this.ShowHorizontal();
         else this.ShowVertical();
-
-        this.Visible = true;
+        super.Show();
     }
 
-    Hide()
-    {
-        this.SelfElem.innerHTML = "";
-        this.Visible = false;
-    }
 	
 }

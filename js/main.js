@@ -16,7 +16,7 @@ class Application  extends BaseControl
         this.TestB = new Button('btnTestB');
         this.TestB.SetOnClick(this.TestBOnClick.bind(this));
 
-        this.ZoomManager = new ZoomManager(0, 0, 1500, 1500);
+        this.ZoomManager = new ZoomManager();
         this.ZoomControl = new ZoomControl(this.ZoomManager);
         
         this.EditorState = new EditorState();

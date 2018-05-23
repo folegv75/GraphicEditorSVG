@@ -9,12 +9,17 @@ class Holst extends BaseControl
 	{
 		super(id);
 
+		this.RulerWidth=30;
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
-		this.Paper = document.getElementById(Const.PaperId);
+		this.Paper = new Paper(Const.PaperId, this.RulerWidth, this.RulerWidth, 1500,1500, 0,0);
 
-        this.Grid = new Grid(Const.GridId, 30, 30, 1500,1500);
-        this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, 0, 1500);
-        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, 1500);
+
+		this.Grid = new Grid(Const.GridId, this.RulerWidth, this.RulerWidth, 1500,1500, 0,0);
+		this.Grid.Show();
+		this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, this.RulerWidth,0, 1500, this.RulerWidth, 0,0);
+		this.RulerHorizontal.Show();
+        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, this.RulerWidth, this.RulerWidth, 1500, 0,0);
+		this.RulerVertical.Show();
 		
         MainApp.ZoomManager.AppendView(this);
 	}
@@ -23,9 +28,30 @@ class Holst extends BaseControl
 	{
         this.SelfElem.style.width = Width + "px";
 		this.SelfElem.style.height = Height + "px";
-		this.Grid.SetViewBoxSize(30,30,Width, Height);
+		this.Grid.Width = Width - this.RulerWidth;
+		this.Grid.Height = Height - this.RulerWidth;
+		this.RulerHorizontal.Width = Width-this.RulerWidth;
+		this.RulerVertical.Height = Height-this.RulerWidth;
+		this.Paper.Width = Width-this.RulerWidth;
+		this.Paper.Height = Height-this.RulerWidth;
+
 	}
 
+	/** @desc утановить размеры холста */
+	SetViewBoxSize(shiftX, shiftY, zoom)
+	{
+		//let value = '' + (left-30) + ' ' + (top-30) + ' ' + width + ' ' + height;
+		//this.Paper.setAttributeNS(null,'viewBox', value);\
+
+        this.Grid.ShiftX = shiftX;
+		this.Grid.ShiftY = shiftY;
+		this.Grid.Zoom = zoom;
+		this.RulerHorizontal.ShiftX = shiftX;
+        this.RulerVertical.ShiftY = shiftY;
+        this.Paper.ShiftX = shiftX;
+        this.Paper.ShiftY = shiftY;
+	}
+	
 	
 	/** @param {EditorEvent}  editorEvent*/
 	ShowEventInStatusInfo(editorEvent)
@@ -122,15 +148,5 @@ class Holst extends BaseControl
 		this.ShowEventInStatusInfo(editorEvent);
 	}
 
-	/** @desc утановить размеры холста */
-	SetViewBoxSize(left, top, width, height)
-	{
-		let value = '' + (left-30) + ' ' + (top-30) + ' ' + width + ' ' + height;
-		this.Paper.setAttributeNS(null,'viewBox', value);
-        this.Grid.SetViewBoxSize(30, 30, width, height);
-        this.RulerHorizontal.SetViewBoxSize(left, top, width, height);
-        this.RulerVertical.SetViewBoxSize(left, top, width, height);
-
-	}
 	
 }

@@ -8,17 +8,17 @@ class ZoomManager
 	/**
 	 * @param {Holst} view 
 	 */
-	constructor (left, top, width, height)
+	constructor ()
 	{
 		this.View = [];
-		this.ZoomKoef = 0;
-		this.Zoom = 100;
-		this.Left = left;
-		this.Top = top;
-		this.InitialHeight = height;
-		this.InitialWidth = width;
-		this.Width = width;
-		this.Height = height;
+		this.internalZoomKoef = 0;
+		this.Zoom = 1;
+		this.ShiftX = 0;
+		this.ShiftY = 0;
+		//this.InitialHeight = height;
+		//this.InitialWidth = width;
+		//this.Width = width;
+		//this.Height = height;
 		this.StepHorizontal = 100;
 		this.StepVertical = 100;
 		this.StepZoom = 0.25;
@@ -34,40 +34,41 @@ class ZoomManager
 
 	SetViewBoxSize()
 	{
-		for(let i=0; i<this.View.length; i++) this.View[i].SetViewBoxSize(this.Left, this.Top, this.Width, this.Height);
+		for(let i=0; i<this.View.length; i++) this.View[i].SetViewBoxSize(this.ShiftX, this.ShiftY, this.Zoom);
 	//	let value = '' + this.Left + ' ' + this.Top + ' ' + this.Width + ' ' + this.Height;
 	//	this.View.SelfElem.setAttributeNS(null,'viewBox', value)
 	}
 
 	ViewMoveLeft() 
 	{
-		this.Left += this.StepHorizontal;
+		this.ShiftX += this.StepHorizontal;
 		this.SetViewBoxSize();
 	}
 
 	ViewMoveRight()
 	{
-		this.Left -= this.StepHorizontal;
+		this.ShiftX -= this.StepHorizontal;
 		this.SetViewBoxSize();		
 	}
 	
 	ViewMoveUp()
 	{
-		this.Top += this.StepVertical;
+		this.ShiftY += this.StepVertical;
 		this.SetViewBoxSize();		
 	}
 	
 	ViewMoveDown()
 	{
-		this.Top -= this.StepVertical;
+		this.ShiftY -= this.StepVertical;
 		this.SetViewBoxSize();		
 	}
 	
 	ViewZoomIn()
 	{
 
-		if (this.ZoomKoef>-1 && this.ZoomKoef<=1) this.ZoomKoef = -1;
-		this.ZoomKoef -= this.StepZoom;
+		if (this.internalZoomKoef>-1 && this.internalZoomKoef<=1) this.internalZoomKoef = -1;
+		this.internalZoomKoef -= this.StepZoom;
+		this.calculateZoom();
 
 
 		// if (this.Zoom>=100) {
@@ -89,24 +90,24 @@ class ZoomManager
 		// 		this.Zoom = tempZoom;
 		// 	}
 		// }
-		this.calculateZoom();
+
 		this.SetViewBoxSize();		
 
 	}
 	
 	ViewZoomNone()
 	{
-		this.Width = this.InitialWidth;
-		this.Height = this.InitialHeight;
-		this.ZoomKoef = 0;
-		this.Zoom = 100;
+		// this.Width = this.InitialWidth;
+		// this.Height = this.InitialHeight;
+		this.internalZoomKoef = 0;
+		this.Zoom = 1;
 		this.SetViewBoxSize();
 	}
 	
 	ViewZoomOut()
 	{
-		if (this.ZoomKoef>=-1 && this.ZoomKoef<1) this.ZoomKoef = 1;
-		this.ZoomKoef += this.StepZoom;
+		if (this.internalZoomKoef>=-1 && this.internalZoomKoef<1) this.internalZoomKoef = 1;
+		this.internalZoomKoef += this.StepZoom;
 
 		this.calculateZoom();
 		this.SetViewBoxSize();
@@ -114,15 +115,14 @@ class ZoomManager
 
 	calculateZoom()
 	{
-		if (this.ZoomKoef ==0 ) {
-			this.Width = this.InitialWidth;
-			this.Height = this.InitialHeight;	
+		if (this.internalZoomKoef ==0 ) {
+			this.Zoom = 1;
 		}
-		else if (this.ZoomKoef>0) 
+		else if (this.internalZoomKoef>0) 
 		{
 			// увеличение
-			this.Width = Math.round(this.InitialWidth * this.ZoomKoef);
-			this.Height = Math.round(this.InitialHeight * this.ZoomKoef);
+			this.Zoom = this.internalZoomKoef;
+			//this.Height = Math.round(this.InitialHeight * this.ZoomKoef);
 			//if (this.Width<100) {
 			//	this.Width = 100;
 				
@@ -133,8 +133,8 @@ class ZoomManager
 		else
 		{
 			// уменьшение
-			this.Width = -Math.round(this.InitialWidth / this.ZoomKoef);
-			this.Height = -Math.round(this.InitialHeight / this.ZoomKoef);
+			this.Zoom = -1 / this.internalZoomKoef;
+			//this.Height = -Math.round(this.InitialHeight / this.ZoomKoef);
 
 			// if (this.Height<100) {
 			// 	this.Height = 100;
