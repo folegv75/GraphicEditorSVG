@@ -152,6 +152,10 @@ div.holst {
 	font-size: 0px;
 }
 
+a  {
+	font-size: 10pt;
+}
+
 
 .debug-info {
 	width:100%;
@@ -162,7 +166,7 @@ div.holst {
 }
    
 .menu {
-    background: #70809014;
+    background: #f6fbff;
     border: solid 1px;
 	display: inline-block;
 	vertical-align: top;

@@ -12,30 +12,20 @@ class Ruler extends Layer
         this.SubDimension = 50;
         this.DetailDimension = 10;
     }
-
-    // SetViewBoxSize(startX, startY, width, height)
-    // {
-    //     if (this.RulerType == RulerType.Horizontal) 
-    //     {
-    //         this.StartPosition = startX;
-    //         this.EndPosition = startX + width;
-    //         //this.Base = startY;
-    //         let value = '' + (startX-30) + ' ' + 0 + ' ' + width + ' ' + height;
-    //         this.SelfElem.setAttributeNS(null,'viewBox', value);
-    //     } else
-    //     {
-    //         this.StartPosition = startY;
-    //         this.EndPosition = startY + height;
-    //         //this.Base = startX;
-    //         let value = '' + 0 + ' ' + (startY-30) + ' ' + width + ' ' + height;
-    //         this.SelfElem.setAttributeNS(null,'viewBox', value);
-    //     }
-    //     if (this.Visible) this.Show();
-        
-    // }
-    
+  
     ShowHorizontal()
     {
+        // выводим фоновый прямоугольник
+        let backrect = document.createElementNS(xmlns, "rect");
+        backrect.setAttributeNS(null,'fill','black');
+        backrect.setAttributeNS(null,'opacity','0.0');
+        backrect.setAttributeNS(null, "x", this.zLeft);
+        backrect.setAttributeNS(null, "y", this.zTop);
+        backrect.setAttributeNS(null, "width", this.zWidth);
+        backrect.setAttributeNS(null, "height", this.zHeight);
+        this.SelfElem.appendChild(backrect);
+        
+        
         // Выводим вертикальные полоски основных измерений и названия измерений
         let groupLine = document.createElementNS(xmlns, "g");
         groupLine.setAttributeNS(null,'stroke','black');
@@ -84,6 +74,15 @@ class Ruler extends Layer
 
     ShowVertical()
     {
+        let backrect = document.createElementNS(xmlns, "rect");
+        backrect.setAttributeNS(null,'fill','black');
+        backrect.setAttributeNS(null,'opacity','0.0');
+        backrect.setAttributeNS(null, "x", this.zLeft);
+        backrect.setAttributeNS(null, "y", this.zTop);
+        backrect.setAttributeNS(null, "width", this.zWidth);
+        backrect.setAttributeNS(null, "height", this.zHeight);
+        this.SelfElem.appendChild(backrect);
+
         // Основные измерения с выводом значений
         let groupLine = document.createElementNS(xmlns, "g");
         groupLine.setAttributeNS(null,'stroke','black');

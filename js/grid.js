@@ -9,8 +9,8 @@ class Grid extends Layer
     constructor (id, x, y, width, height, shiftX, shiftY)
 	{
         super(id, x, y, width, height, shiftX, shiftY);
-        this.StepVertical = 20;
-        this.StepHorizontal = 20;
+        this.StepVertical = 10;
+        this.StepHorizontal = 10;
     }
    
     Show()

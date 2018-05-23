@@ -88,8 +88,8 @@ class Layer extends BaseControl
     /* Получение начальной позиции, ширины и высоты с учетом сдвига и масштабирования */
     get zLeft() { return Math.round(this.ShiftX); }
     get zTop() { return Math.round(this.ShiftY); }
-    get zRight() { return Math.round((this.ShiftX+this.Width)*this.xZoom); }
-    get zBottom() { return Math.round((this.ShiftY+this.Height)*this.xZoom); }
+    get zRight() { return Math.round(this.ShiftX+this.Width*this.xZoom); }
+    get zBottom() { return Math.round(this.ShiftY+this.Height*this.xZoom); }
     get zWidth() { return Math.round(this.Width * this.xZoom); }
     get zHeight() { return Math.round(this.Height * this.xZoom); }
 

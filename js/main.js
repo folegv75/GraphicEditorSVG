@@ -59,28 +59,30 @@ class Application  extends BaseControl
     {
         document.addEventListener("keydown",this.OnKeyDown);
 
-       this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
-       this.ButtonLoadFile.SetOnClick(this.ButtonLoadFileOnClick.bind(this));
+        this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
+        this.ButtonLoadFile.SetOnClick(this.ButtonLoadFileOnClick.bind(this));
        
-       this.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
-       this.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
-       this.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
-       //document.addEventListener('mousemove',this.HolstOnMouseMove.bind(this))
+        this.SetOnMouseDown(this.HolstOnMouseDown.bind(this));
+        this.SetOnMouseUp(this.HolstOnMouseUp.bind(this));
+        this.SetOnMouseMove(this.HolstOnMouseMove.bind(this));
+        //document.addEventListener('mousemove',this.HolstOnMouseMove.bind(this))
 
-       /*   Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
+        /*   Событие MouseOver нам не интересно. Узнать над каким элементом,  мы можем из события MouseMove, если посмотрим в реквизит Path. 
             В нем будем вся последовательность тегов, на которым двигается мышь
-       */
+        */
+        let options = {};
+        options.passive = false;
 
-       this.SetOnTouchStart(this.HolstOnTouchStart.bind(this), false);
-       this.SetOnTouchMove(this.HolstOnTouchMove.bind(this), false);
-       this.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), false);
-       this.SetOnTouchCancel(this.HolstOnTouchCancel.bind(this), false);
+        this.SetOnTouchStart(this.HolstOnTouchStart.bind(this), options);
+        this.SetOnTouchMove(this.HolstOnTouchMove.bind(this), options);
+        this.SetOnTouchEnd(this.HolstOnTouchEnd.bind(this), options);
+        this.SetOnTouchCancel(this.HolstOnTouchCancel.bind(this), options);
        
-       this.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
+        this.SetOnContextMenu(this.HolstOnContextMenu.bind(this));
 
    
-       window.onbeforeunload = this.OnExit.bind(this);
-       window.onresize = this.OnResizeMainWindow.bind(this);
+        window.onbeforeunload = this.OnExit.bind(this);
+        window.onresize = this.OnResizeMainWindow.bind(this);
        
     }
 
@@ -122,7 +124,6 @@ class Application  extends BaseControl
     */        
     OnKeyDown(Event)
     {
-
         console.log('KeyDown:',Event.key);
     }
 
