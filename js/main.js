@@ -1,12 +1,13 @@
 /* jshint esversion: 6 */
 
-var MainApp = null;
+//var MainApp = null;
 
 class Application  extends BaseControl
 {
 	constructor(id)
 	{
         super(id);
+        this.PenLockHost = false;
     }
 
     Init() {
@@ -20,7 +21,6 @@ class Application  extends BaseControl
         this.ZoomControl = new ZoomControl(this.ZoomManager);
         
         this.EditorState = new EditorState();
-        
 
         this.LabelTouchInfo = new Label(Const.LabelTouchInfo);
         this.LabelMouseInfo = new Label(Const.LabelMouseInfo);
@@ -270,6 +270,14 @@ class Application  extends BaseControl
         return point;
     }
    
+    isHostOnPoint(x,y)
+    {
+        let elems = document.elementsFromPoint(x, y);
+        for(let i=0; i<elems.length; i++)       
+            if (elems[i].id==Const.HolstId)
+                return true;
+        return false;
+    }
 
     /**
     * @param {MouseEvent} Event
@@ -277,8 +285,15 @@ class Application  extends BaseControl
     HolstOnMouseDown(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        let point = this.GetCoordinatesMouseEvent(Event);
-        this.Holst.PenDown(point.Y, point.Y, Event.clientX, Event.clientY, Event);
+
+        if (this.isHostOnPoint(Event.clientX, Event.clientY)) 
+        {
+            this.PenLockHost = true;
+            Event.preventDefault();        
+            let point = this.GetCoordinatesMouseEvent(Event);
+            this.Holst.PenDown(point.Y, point.Y, Event.clientX, Event.clientY, Event);
+        }
+        else this.PenLockHost = false;
     } 
 
     /**
@@ -287,8 +302,13 @@ class Application  extends BaseControl
     HolstOnMouseUp(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        let point = this.GetCoordinatesMouseEvent(Event);
-        this.Holst.PenUp(point.X, point.Y, Event.clientX, Event.clientY, Event);       
+        if (this.PenLockHost)
+        {
+            Event.preventDefault();        
+            let point = this.GetCoordinatesMouseEvent(Event);
+            this.Holst.PenUp(point.X, point.Y, Event.clientX, Event.clientY, Event); 
+        }
+        this.PenLockHost = false;     
     } 
 
     /**
@@ -297,8 +317,13 @@ class Application  extends BaseControl
     HolstOnMouseMove(Event)
     {
         this.ShowInfoMouseEvent(Event);
-        let point = this.GetCoordinatesMouseEvent(Event);
-        this.Holst.PenMove(point.X, point.Y, Event.clientX, Event.clientY, Event);
+
+        if (this.PenLockHost || this.isHostOnPoint(Event.clientX, Event.clientY))
+        {
+            Event.preventDefault();        
+            let point = this.GetCoordinatesMouseEvent(Event);
+            this.Holst.PenMove(point.X, point.Y, Event.clientX, Event.clientY, Event);
+        }
     } 
 
     /**
@@ -306,11 +331,15 @@ class Application  extends BaseControl
     */        
    HolstOnTouchStart(Event)
     {
-        Event.preventDefault();        
         this.ShowInfoTouchEvent(Event);
         let coord = this.GetCoordinatesTouchEvent(Event);
         if (coord==null) return;
-        this.Holst.PenDown(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        if (this.isHostOnPoint(coord.ClientX, coord.ClientY))
+        {
+            this.PenLockHost = true;
+            Event.preventDefault();        
+            this.Holst.PenDown(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        }
     }
 
     /**
@@ -318,11 +347,15 @@ class Application  extends BaseControl
     */        
    HolstOnTouchMove(Event)
     {
-        Event.preventDefault();        
+        this.ShowInfoTouchEvent(Event);
         this.ShowInfoTouchEvent(Event);
         let coord = this.GetCoordinatesTouchEvent(Event);
         if (coord==null) return;
-        this.Holst.PenMove(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        if (this.PenLockHost) 
+        {
+            Event.preventDefault();        
+            this.Holst.PenMove(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        }
     }
 
     /**
@@ -330,17 +363,21 @@ class Application  extends BaseControl
     */        
    HolstOnTouchEnd(Event)
     {
-        Event.preventDefault();
         //console.log(Event.type, Event);
         this.ShowInfoTouchEvent(Event);
         let coord = this.GetCoordinatesTouchEvent(Event);
         if (coord==null) return;
-        this.Holst.PenUp(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        if (this.PenLockHost) 
+        {
+            Event.preventDefault();
+            this.Holst.PenUp(coord.X, coord.Y, coord.ClientX, coord.ClientY, Event);        
+        }
+        this.PenLockHost = false;
     }
 
     HolstOnTouchCancel(Event)
     {
-
+        this.PenLockHost = false;
     }
 
     HolstOnKeyDown(Event)
@@ -357,7 +394,7 @@ class Application  extends BaseControl
 
 function ApplicationInit()
 {
-    MainApp = new Application(Const.MainApplicationId); 
+    var MainApp = new Application(Const.MainApplicationId); 
     MainApp.Init();
 }
 

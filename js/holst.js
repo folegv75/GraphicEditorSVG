@@ -9,15 +9,17 @@ class Holst extends BaseControl
 	{
 		super(id);
 
+		this.ProcessAction = new ProcessAction();
+
 		this.RulerWidth=30;
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
 		let StartWidth = 1500;
 
 		this.Grid = new Grid(Const.GridId, this.RulerWidth, this.RulerWidth, StartWidth,StartWidth, 0,0);
 		this.Grid.Show();
-		this.RulerHorizontal = new Ruler(Const.RulerHorizontal, RulerType.Horizontal, this.RulerWidth,0, StartWidth, this.RulerWidth, 0,0);
+		this.RulerHorizontal = new Ruler(Const.RulerHorizontalId, RulerType.Horizontal, this.RulerWidth,0, StartWidth, this.RulerWidth, 0,0);
 		this.RulerHorizontal.Show();
-        this.RulerVertical = new Ruler(Const.RulerVertical, RulerType.Vertical, 0, this.RulerWidth, this.RulerWidth, StartWidth, 0,0);
+        this.RulerVertical = new Ruler(Const.RulerVerticalId, RulerType.Vertical, 0, this.RulerWidth, this.RulerWidth, StartWidth, 0,0);
 		this.RulerVertical.Show();
 		this.Paper = new Paper(Const.PaperId, this.RulerWidth, this.RulerWidth, StartWidth,StartWidth, 0,0);
 		this.Paper.Show();
@@ -68,8 +70,10 @@ class Holst extends BaseControl
 		let st = 	"X=" +  editorEvent.X + " Y=" +  editorEvent.Y  + 
 					" cX=" +  editorEvent.ClientX + " cY=" +  editorEvent.ClientY + 
 					" " + editorEvent.Type +
-					" " + Util.PathToString(Util.ParentTreeToArray(editorEvent.TopElement), 'Holst') +
-					" " + "TopFig: " + (editorEvent.TopFigure == null ? "" : editorEvent.TopFigure.tagName+"#"+editorEvent.TopFigure.id);
+					//" " + Util.PathToString(Util.ParentTreeToArray(editorEvent.TopElement), 'Holst') +
+					" " + " | TopFig: " + (editorEvent.TopFigure == null ? "nul" : editorEvent.TopFigure.tagName+"#"+editorEvent.TopFigure.id) +
+					" " + " | Layer: " + (editorEvent.Layer == null ? "nul" : editorEvent.Layer.Id) +
+					" " + " | Elem: " + (editorEvent.TopElement == null ? "nul" : editorEvent.TopElement.tagName+"#"+editorEvent.TopElement.id);
 		this.LabelStatusInfo.SetValue(st);
 	}
 
@@ -85,25 +89,45 @@ class Holst extends BaseControl
 		editorEvent.SourceEvent = sourceEvent;
 		editorEvent.ClientX = clientx;
 		editorEvent.ClientY = clienty;
+		editorEvent.TopElement = null;
+		editorEvent.TopFigure = null;
+		editorEvent.Layer = null;
 
-        // координаты относительно верxнего левого угла окна рабочей области браузера
+		// координаты относительно верxнего левого угла окна рабочей области браузера
 		editorEvent.TopElement = document.elementFromPoint(clientx, clienty);
+		let elems = Util.ParentTreeToArray(editorEvent.TopElement);
+		for (let i=0; i<elems.length; i++)
+		{
+			switch (elems[i].id)
+			{
+				case Const.HolstId:
+					editorEvent.Layer = this;
+					break;
+				case Const.GridId:
+					editorEvent.Layer = this.Grid;
+					break;
+				case Const.PaperId:
+					editorEvent.Layer = this.Paper;
+					break;
+				case Const.RulerHorizontalId:
+					editorEvent.Layer = this.RulerHorizontal;
+					break;
+				case Const.RulerVerticalId:
+					editorEvent.Layer = this.RulerVertical;
+					break;
+			}
+			if (editorEvent.Layer!=null) break;
+		}
+
 		let topFigureId = this.FindTopFigureIdClientArea(clientx, clienty);
 		if (topFigureId!=null) 
 		{
 			editorEvent.TopFigure = document.getElementById(topFigureId);
 		}
 
-		editorEvent.X = x;
-		editorEvent.Y = y;
+		editorEvent.X = x - this.RulerWidth;
+		editorEvent.Y = y - this.RulerWidth;
 		
-        /* TODO нужно пересчитать координаты 
-            x - координата X от нуля холста
-            y - координата Y от нуля холста
-			масштабировнаие нужно учитывать
-			сдвиг бумаги на холсте надо учитывать
-            сдвиг линейки надо учитывать. она сдвигается синхронно с бумагойт
-        */
 	   this.ProcessEvent(editorEvent);
 		
 	}
@@ -121,11 +145,6 @@ class Holst extends BaseControl
 	PenMove(x, y, clientx, clienty, sourceEvent)
 	{
 		this.PenChange(x, y, clientx, clienty, sourceEvent, EditorEventType.PenMove);
-	}
-
-	PenMove2(x, y, clientx, clienty, sourceEvent)
-	{
-		//this.PenChange(x, y, clientx, clienty, sourceEvent, EditorEventType.PenMove);
 	}
 
 	// Найти верхнюю фигуру. Фигура это элемент <g>, у которого есть tag 'figuretype' 'figure' или  'connector'
@@ -155,7 +174,139 @@ class Holst extends BaseControl
 	ProcessEvent(editorEvent)
 	{
 		this.ShowEventInStatusInfo(editorEvent);
+		console.log(editorEvent);
+		
+		MainApp.EditorState.LastEvent = editorEvent;
+		MainApp.EditorState.CalculateHash();
+
+		switch (MainApp.EditorState.Hash)
+		{
+			case 'Select-None-PenDown':
+			{
+				ProcessAction.SelectFigure();
+			}
+			break;
+			case 'Select-None-PenMove':
+			{
+
+			}
+			break;			
+			case 'Select-None-SetMode':
+			{
+
+			}
+			break;
+			case 'Select-None-Rename':
+			{
+
+			}
+			break;
+
+			case 'Select-MoveFigure-PenMove':
+			{
+
+			}
+			break;
+			case 'Select-MoveFigure-PenUp':
+			{
+
+			}
+			break;
+			case 'Select-MoveFigure-SetMode':
+			{
+
+			}
+			break;
+			case 'Select-MoveFigure-Cancel':
+			{
+
+			}
+			break;
+
+			case 'Select-RenameFigure-SetMode':
+			{
+
+			}
+			break;
+			case 'Select-RenameFigure-Cancel':
+			{
+
+			}
+			break;
+			case 'Select-RenameFigure-Rename':
+			break;
+			{
+
+			}
+
+			case 'Figure-None-PenDown':
+			{
+
+			}
+			break;
+			case 'Figure-None-SetMode':
+			{
+
+			}
+			break;
+			case 'Figure-DrawFigure-PenMove':
+			{
+
+			}
+			break;
+			case 'Figure-DrawFigure-PenUp':
+			{
+
+			}
+			break;
+			case 'Figure-DrawFigure-SetMode':
+			{
+
+			}
+			break;
+			case 'Figure-DrawFigure-Cancel':
+			{
+
+			}
+			break;
+
+
+			case 'Connector-None-PenDown':
+			{
+
+			}
+			break;
+			case 'Connector-None-SetMode':
+			{
+
+			}
+			break;
+
+			case 'Connector-DrawConnector-PenMove':
+			{
+
+			}
+			break;
+			case 'Connector-DrawConnector-PenUp':
+			{
+
+			}
+			break;
+			case 'Connector-DrawConnector-Setmode':
+			{
+
+			}
+			break;
+			case 'Connector-DrawConnector-Cancel':
+			{
+
+			}
+			break;
+
+			default:
+				/* Игнорируем событие */
+			break;
+		}
 	}
 
-	
 }

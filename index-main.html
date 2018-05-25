@@ -11,6 +11,7 @@
 	<script src="js/const.js"></script>
 	<script src="js/util.js"></script>
 	<script src="js/base-control.js"></script>
+	<script src="js/base-shape.js"></script>
 	<script src="js/label.js"></script>
 	<script src="js/button.js"></script>
 	<script src="js/layer.js"></script>
@@ -18,7 +19,7 @@
 	<script src="js/ruler.js"></script>
 	<script src="js/paper.js"></script>
 	<script src="js/editor-event.js"></script>
-	<script src="js/holst-contaier.js"></script>	
+	<script src="js/processaction.js"></script>
 	<script src="js/holst.js"></script>
 	<script src="js/zoom-manager.js"></script>
 	<script src="js/editor-state.js"></script>
@@ -96,6 +97,7 @@
 				<svg id='LayerGrid' class='grid' width="1500" height="1500" viewBox="0 0 1500 1500">
 				</svg>
 				<svg id="HolstPaper" width="1500" height="1500" viewBox="-30 -30 1500 1500">
+					<rect id='PaperBackground' x='0' y='0' width='1500' height='1500' fill='lighgray' opacity='0.1'/>
 				
 					<g id='LayerLines'>
 						<g figuretype='connetor' id='con1'>

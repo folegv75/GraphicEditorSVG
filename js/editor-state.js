@@ -4,9 +4,27 @@ class EditorState
 {
     constructor ()
     {
+        /** Режим редактирования */
         this.Mode = EditorMode.Select;
+        /** Текущее действие редактора. 
+         * Например, по кругу: нет действия -> начало рисование фигуры -> продолжение рисования -> завершение рисования -> нет действия */
+        this.Action = EditorAction.None;
+        /** Текущая выделенаня фигура */
+        this.SelectedFigure = null;
+        /** Последнее событие */
+        this.LastEvent = null;
+        /** Хеш текущего состояния */
+        this.Hash = '';
         this.ListenersOnChange = [];
     }
+
+    /** Вычисляет хеш состояния и события Режим + ТекущееДействие + Событие
+     *  Пример, 'Select-None-PenDown'
+     */
+    CalculateHash()
+    {
+        this.Hash = this.Mode + '-' + this.Action + '-' + this.LastEvent.Type;        
+    }    
 
     SetMode(newmode)
     {

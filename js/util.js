@@ -23,6 +23,7 @@ class Util
         return res;
     }
 
+    /** Сформировать массив html элементов из элементов и его родителей */
     static ParentTreeToArray(elem)
     {
         let res=[];

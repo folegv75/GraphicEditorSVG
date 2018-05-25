@@ -10,12 +10,14 @@ Const.MainMenuId = 'mainmenu';
 
 Const.HolstId = 'Holst';
 Const.PaperId = 'HolstPaper';
+Const.PaperBackgroundId = 'PaperBackground';
 
 Const.GridId = 'LayerGrid';
+Const.RulerHorizontalId = 'ruler-h';
+Const.RulerVerticalId = 'ruler-v';
+
 Const.LayerLines = 'LayerLines';
 Const.LayerFigures = 'LayerFigures';
-Const.RulerHorizontal = 'ruler-h';
-Const.RulerVertical = 'ruler-v';
 
 Const.AddDebugInfoId = 'lblbDebugInfo';
 Const.LabelTouchInfo = 'lblTouchInfo';
@@ -65,3 +67,11 @@ var EditorMode = {};
 EditorMode.Select = 'select';
 EditorMode.Figure = 'figure';
 EditorMode.Connector = 'connector';
+
+/** Состояние действия */
+var EditorAction = {};
+EditorAction.None = 'None';
+EditorAction.MoveFigure = 'MoveFigure';
+EditorAction.DrawFigure = 'DrawFigure';
+EditorAction.DrawConnector = 'DrawConnector';
+EditorAction.RenameFigure = 'RenameFigure';
