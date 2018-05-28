@@ -22,9 +22,9 @@ class ProcessAction
 		alert('Не реализовано.TODO');
 	}
 
-    /** Продолжить перемещение фигуры */
-    ContinueMoveFigure()
-    {
+  /** Продолжить перемещение фигуры */
+   ContinueMoveFigure()
+   {
 		alert('Не реализовано.TODO');
     } 
     
@@ -58,11 +58,19 @@ class ProcessAction
 		alert('Не реализовано.TODO');
     }
     
-    /** Начать рисование фигуры */
-	BeginDrawFigure()
-    {
-		alert('Не реализовано.TODO');
-    }
+   /** Начать рисование фигуры */
+	 BeginDrawFigure()
+   {
+      if (this.EditorState.TopFigure==null && editorEvent.Layer==this.Paper) 
+      {
+        // создаем новую фигуру. Тип фигуры, начальная позиция (x, y) с учетом привязки к сетке
+        // TODO определение типа фигуры, который нужно нарисовать
+        this.EditorState.ActionFigure = new BaseFigure(Util.GenerateId, editorEvent.X, editorEvent.Y);
+        this.EditorState.ActionFigure.ShowContur();
+        // QWERTY Порядок создания, отображения фигуры в слое и между группами слоя.
+      }
+  
+  }
     
     /** Продолжить рисование фигуры */
     ContinueDrawFigure()

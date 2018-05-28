@@ -9,7 +9,7 @@ class Holst extends BaseControl
 	{
 		super(id);
 
-		this.ProcessAction = new ProcessAction();
+		this.Actions = new ProcessAction();
 
 		this.RulerWidth=30;
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
@@ -183,7 +183,7 @@ class Holst extends BaseControl
 		{
 			case 'Select-None-PenDown':
 			{
-				ProcessAction.SelectFigure();
+				this.Actions.SelectFigure();
 			}
 			break;
 			case 'Select-None-PenMove':
@@ -241,6 +241,7 @@ class Holst extends BaseControl
 
 			case 'Figure-None-PenDown':
 			{
+				this.Actions.BeginDrawFigure();
 
 			}
 			break;
