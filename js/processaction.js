@@ -66,10 +66,10 @@ class ProcessAction
         // создаем новую фигуру. Тип фигуры, начальная позиция (x, y) с учетом привязки к сетке
         // TODO определение типа фигуры, который нужно нарисовать
         this.EditorState.ActionFigure = new BaseFigure(Util.GenerateId, editorEvent.X, editorEvent.Y);
-        this.EditorState.ActionFigure.ShowContur();
+        this.EditorState.ActionFigure.ShowContour();
         // QWERTY Порядок создания, отображения фигуры в слое и между группами слоя.
       }
-  
+
   }
     
     /** Продолжить рисование фигуры */

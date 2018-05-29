@@ -1,5 +1,14 @@
 /*jshint esversion: 6 */
 
+/** Слой в виде группы элементов. */
+class GroupLayer extends BaseControl
+{
+    constructor (id)
+    {
+        super(id);
+    }
+}
+
 class Paper extends Layer
 {
 
@@ -7,6 +16,12 @@ class Paper extends Layer
 	{
         super(id, x, y, width, height, shiftX, shiftY);
         this.rectBackground = document.getElementById(Const.PaperBackgroundId);
+        /** Слой для линий коннекторов */
+        this.LayerLine = new GroupLayer(Const.LayerLineId);
+        /** Слой для фигур */
+        this.LayerFigure = new GroupLayer(Const.LayerFigureId);
+        /** Слой для рисования контуров */
+        this.LayerCountourId = new GroupLayer(Const.LayerContourId);
     }
     
 

@@ -16,8 +16,9 @@ Const.GridId = 'LayerGrid';
 Const.RulerHorizontalId = 'ruler-h';
 Const.RulerVerticalId = 'ruler-v';
 
-Const.LayerLines = 'LayerLines';
-Const.LayerFigures = 'LayerFigures';
+Const.LayerLineId = 'LayerLine';
+Const.LayerFigureId = 'LayerFigure';
+Const.LayerContourId = 'LayerContour';
 
 Const.AddDebugInfoId = 'lblbDebugInfo';
 Const.LabelTouchInfo = 'lblTouchInfo';
