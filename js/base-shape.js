@@ -64,10 +64,12 @@ class BaseRectangle
         this.FixBottom = false;*/
     }
 
-    get Left() { return xLeft; }
-    get Top() { return xTop; }
-    get Right() { return xRight; }
-    get Bottom() { return xBottom; }
+    get Left() { return this.xLeft; }
+    get Top() { return this.xTop; }
+    get Right() { return this.xRight; }
+    get Bottom() { return this.xBottom; }
+    get Width() { return this.xRight-this.xLeft; }
+    get Height() {return this.xBottom-this.xTop; }
 
     set Left(value) 
     {
@@ -92,6 +94,17 @@ class BaseRectangle
         if (value>=this.xTop) this.xBottom = value;
         else this.xTop = value;
     }
+
+    /** Ширина и высота всегда устанавилвается от левого верхнего угла */
+    set Width(value)
+    {
+        this.xRight = this.xLeft + value;
+    }
+
+    set Height(value)
+    {
+        this.xBottom = this.xTop + value;
+    }
 }
 
 /** Общий родитель для всех элементов (shape) отображаемых на холсте*/
@@ -99,8 +112,8 @@ class BaseShape
 {
     /** Создание фигуры 
      * @param {string} id -eникальный идентификатор фигуры
-     * @param {umber} left - x координата верхнего левого угла
-     * @param {umber} top - e координата верхнего левого угла
+     * @param {number} left - x координата верхнего левого угла
+     * @param {number} top - e координата верхнего левого угла
     */
 
     constructor(id, left, top)
@@ -109,8 +122,8 @@ class BaseShape
         this.Type = null;
         this.Left = left;
         this.Top = top;
-        this.Width = 1;
-        this.Height = 1;
+        this.Width = 0;
+        this.Height = 0;
     }
 
     /** Показать выделение фигуры */
@@ -123,32 +136,39 @@ class BaseShape
     {
     }
 
-    /** Создать контур фигуры. Начало контура совпадает с верхним левым углом текущий фигуры. В этот момент ширина и выcота контура равны нулю.
-     */
-    CreateContour()
-    {}
-
-    /** Переместить нижний правый  угол контура */
-    MoveCornerContour(right, bottom)
-    {}
-
-    ShowContour()
-    {        
-    }
 }
 
 class BaseFigureContour
 {
     constructor()
     {
-        qwerty
-        определить Id, начальные координаты создать элемент
+        this.Id = Util.GenerateId();
+        this.SelfItem = document.createElement("g");
+        this.SelfItem.id = this.Id;
+        this.Coord = new BaseRectangle(0,0,0,0);
+        this.xVisible = false;
+        this.svgrect = null;
     }
+
 
     Show()
     {
-        изменить координаты элемента
+        if (!this.xVisible)
+        this.svgrect = document.createElement("rect");
+        this.svgrect.setAttributeNS(null, 'x', this.Coord.Left);
+        this.svgrect.setAttributeNS(null, 'y', this.Coord.Top);
+        this.svgrect.setAttributeNS(null, 'width', this.Coord.Width);
+        this.svgrect.setAttributeNS(null, 'height', this.Coord.Height);
+        this.svgrect.setAttributeNS(null, 'stroke', 'red');
+        if (!this.xVisible)  this.SelfItem.appendChild(this.svgrect);
+        this.xVisible = true;
+    }
 
+    Hide() 
+    {
+        this.xVisible = false;
+        this.svgrect = null;
+        this.SelfItem.innerHTML = "";
     }
 
 }
@@ -160,6 +180,39 @@ class BaseFigure extends BaseShape
     {
         super(id);
         this.Type = 'figure';
+    }    
+
+    /** Создать контур фигуры. Начало контура совпадает с верхним левым углом текущий фигуры. 
+     * В этот момент ширина и выcота контура равны ширине фигуры
+     */
+    CreateContour()
+    {
+        this.Contour = new BaseFigureContour();
+        this.Contour.Coord.Left = this.Left;
+        this.Contour.Coord.Top = this.Top;
+        this.Contour.Coord.Width = this.Width;
+        this.Contour.Coord.Height = this.Height;
+        this.Contour.Show();
+    }
+
+    /** Переместить нижний правый угол контура */
+    MoveCornerContour(right, bottom)
+    {
+        this.Contour.Coord.Right = right;
+        this.Contour.Coord.bottom = left;
+        this.Contour.Show();
+    }
+
+    ShowContour(layer)
+    {
+        this.ContourLayer = layer;
+        this.ContourLayer.SelfElem.appendChild(this.Contour.SelfElem);
+        this.Contour.Show();
+    }
+
+    HideContour()
+    {        
+        this.Contour.Hide();
     }    
 }
 

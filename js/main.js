@@ -394,7 +394,7 @@ class Application  extends BaseControl
 
 function ApplicationInit()
 {
-    var MainApp = new Application(Const.MainApplicationId); 
+    window.MainApp = new Application(Const.MainApplicationId); 
     MainApp.Init();
 }
 
