@@ -291,7 +291,7 @@ class Application  extends BaseControl
             this.PenLockHost = true;
             Event.preventDefault();        
             let point = this.GetCoordinatesMouseEvent(Event);
-            this.Holst.PenDown(point.Y, point.Y, Event.clientX, Event.clientY, Event);
+            this.Holst.PenDown(point.X, point.Y, Event.clientX, Event.clientY, Event);
         }
         else this.PenLockHost = false;
     } 

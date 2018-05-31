@@ -9,7 +9,7 @@ class Holst extends BaseControl
 	{
 		super(id);
 
-		this.Actions = new ProcessAction();
+		this.Actions = new ProcessAction(this);
 
 		this.RulerWidth=30;
         this.LabelStatusInfo = new Label(Const.LabelStatusInfo);
@@ -43,9 +43,6 @@ class Holst extends BaseControl
 	/** @desc утановить размеры холста */
 	SetViewBoxSize(shiftX, shiftY, zoom)
 	{
-		//let value = '' + (left-30) + ' ' + (top-30) + ' ' + width + ' ' + height;
-		//this.Paper.setAttributeNS(null,'viewBox', value);\
-
         this.Grid.ShiftX = shiftX;
 		this.Grid.ShiftY = shiftY;
 		this.Grid.Zoom = zoom;
@@ -69,7 +66,7 @@ class Holst extends BaseControl
 	{
 		let st = 	"X=" +  editorEvent.X + " Y=" +  editorEvent.Y  + 
 					" cX=" +  editorEvent.ClientX + " cY=" +  editorEvent.ClientY + 
-					" " + editorEvent.Type +
+					" " + editorEvent.Type + " " + MainApp.EditorState.Hash +
 					//" " + Util.PathToString(Util.ParentTreeToArray(editorEvent.TopElement), 'Holst') +
 					" " + " | TopFig: " + (editorEvent.TopFigure == null ? "nul" : editorEvent.TopFigure.tagName+"#"+editorEvent.TopFigure.id) +
 					" " + " | Layer: " + (editorEvent.Layer == null ? "nul" : editorEvent.Layer.Id) +
@@ -173,134 +170,135 @@ class Holst extends BaseControl
 	 */
 	ProcessEvent(editorEvent)
 	{
-		this.ShowEventInStatusInfo(editorEvent);
 		console.log(editorEvent);
 		
 		MainApp.EditorState.LastEvent = editorEvent;
 		MainApp.EditorState.CalculateHash();
 
+		this.ShowEventInStatusInfo(editorEvent);
+
 		switch (MainApp.EditorState.Hash)
 		{
 			case 'Select-None-PenDown':
 			{
-				this.Actions.SelectFigure();
+				this.Actions.SelectFigure(editorEvent);
 			}
 			break;
 			case 'Select-None-PenMove':
 			{
-
+				// TODO
 			}
 			break;			
 			case 'Select-None-SetMode':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Select-None-Rename':
 			{
-
+				// TODO
 			}
 			break;
 
 			case 'Select-MoveFigure-PenMove':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Select-MoveFigure-PenUp':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Select-MoveFigure-SetMode':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Select-MoveFigure-Cancel':
 			{
-
+				// TODO
 			}
 			break;
 
 			case 'Select-RenameFigure-SetMode':
 			{
-
+				// TODO
 			}
 			break;
+
 			case 'Select-RenameFigure-Cancel':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Select-RenameFigure-Rename':
-			break;
 			{
-
+				// TODO
 			}
+			break;
 
 			case 'Figure-None-PenDown':
 			{
-				this.Actions.BeginDrawFigure();
-
+				this.Actions.BeginDrawFigure(editorEvent);
 			}
 			break;
 			case 'Figure-None-SetMode':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Figure-DrawFigure-PenMove':
 			{
-
+				this.Actions.ContinueDrawFigure(editorEvent);
 			}
 			break;
 			case 'Figure-DrawFigure-PenUp':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Figure-DrawFigure-SetMode':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Figure-DrawFigure-Cancel':
 			{
-
+				// TODO
 			}
 			break;
 
 
 			case 'Connector-None-PenDown':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Connector-None-SetMode':
 			{
-
+				// TODO
 			}
 			break;
 
 			case 'Connector-DrawConnector-PenMove':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Connector-DrawConnector-PenUp':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Connector-DrawConnector-Setmode':
 			{
-
+				// TODO
 			}
 			break;
 			case 'Connector-DrawConnector-Cancel':
 			{
-
+				// TODO
 			}
 			break;
 

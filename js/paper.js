@@ -21,7 +21,7 @@ class Paper extends Layer
         /** Слой для фигур */
         this.LayerFigure = new GroupLayer(Const.LayerFigureId);
         /** Слой для рисования контуров */
-        this.LayerCountourId = new GroupLayer(Const.LayerContourId);
+        this.LayerCountour = new GroupLayer(Const.LayerContourId);
     }
     
 

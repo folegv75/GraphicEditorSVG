@@ -3,13 +3,13 @@
 /** Действия (комнады) выполняемые редактором при переходе их одного состояния в другое*/
 class ProcessAction
 {
-    constructor()
+    constructor(holst)
     {
-
+      this.Holst = holst;
     }
 
 	/** Выделить фигуру. Значит подсветить ее границу цветом выделения. */
-	SelectFigure()
+	SelectFigure(editorEvent)
 	{    
       if (MainApp.EditorState.SelectedFigure!=null) MainApp.EditorState.SelectedFigure.UnSelect();
       MainApp.EditorState.SelectedFigure = TopFigure;
@@ -17,111 +17,113 @@ class ProcessAction
 	}
 
 	/** Начать перемещение фигуры */
-	BeginMoveFigure()
+	BeginMoveFigure(editorEvent)
 	{
 		alert('Не реализовано.TODO');
 	}
 
   /** Продолжить перемещение фигуры */
-   ContinueMoveFigure()
+   ContinueMoveFigure(editorEvent)
    {
 		alert('Не реализовано.TODO');
     } 
     
     /** Завершить перемещение фигуры  */
-    ApproveMoveFigure()
+    ApproveMoveFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** Отменить завершени фигуры */
-    CancelMoveFigure()
+    CancelMoveFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** Начать переименование фигуры */
-    BeginRenameFigure()
+    BeginRenameFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** Принять переименование фигуры */
-    ApproveRenameFigure()
+    ApproveRenameFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** отменить переименование фигуры */
-    CancelRenameFigure()
+    CancelRenameFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
    /** Начать рисование фигуры */
-	 BeginDrawFigure()
+	 BeginDrawFigure(editorEvent)
    {
-      if (this.EditorState.TopFigure==null && editorEvent.Layer==this.Paper) 
+      if (editorEvent.TopFigure==null && editorEvent.Layer==this.Holst.Paper) 
       {
         // создаем новую фигуру. Тип фигуры, начальная позиция (x, y) с учетом привязки к сетке
         // TODO определение типа фигуры, который нужно нарисовать
-        this.EditorState.ActionFigure = new BaseFigure(Util.GenerateId, editorEvent.X, editorEvent.Y);
-        this.EditorState.ActionFigure.ShowContour();
-        // QWERTY Порядок создания, отображения фигуры в слое и между группами слоя.
+        MainApp.EditorState.ActionFigure = new BaseFigure(Util.GenerateId, editorEvent.X, editorEvent.Y);
+        MainApp.EditorState.ActionFigure.CreateContour();
+        MainApp.EditorState.ActionFigure.ShowContour(this.Holst.Paper.LayerCountour);
+
+        MainApp.EditorState.Action = EditorAction.DrawFigure;
       }
 
   }
     
     /** Продолжить рисование фигуры */
-    ContinueDrawFigure()
+    ContinueDrawFigure(editorEvent)
     {
-		alert('Не реализовано.TODO');
+      MainApp.EditorState.ActionFigure.MoveCornerContour(editorEvent.X, editorEvent.Y);
     }
 
     /** Принять рисование фигуры */
-	ApproveDrawFigure()
+	  ApproveDrawFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
 
     /** Отменить рисование фигуры */
-	CancelDrawFigure()
+	  CancelDrawFigure(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
 
     /** Начать рисование коннектор с непривязанным началом  */
-    BeginDrawConnectorFree()
+    BeginDrawConnectorFree(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** Начать рисование коннектор с началом, привязанным к фигуре */
-    BeginDrawConnectorTipBegin()
+    BeginDrawConnectorTipBegin(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
 
     /** Продолжить рисование коннектора */
-	ContinueDrawConnector()
+	ContinueDrawConnector(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
 
     /** Принять рисование коннектора с непривязанным концом */
-	ApproveDrawConnectorFree()
+	ApproveDrawConnectorFree(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
     
     /** Принять рисование коннектора концом, привязанным к фигуре */
-	ApproveDrawConnectorTipEnd()
+	ApproveDrawConnectorTipEnd(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }
 
     /** Отменить рисование коннектора */
-	CancelDrawConnector()
+	CancelDrawConnector(editorEvent)
     {
 		alert('Не реализовано.TODO');
     }

@@ -59,15 +59,15 @@ RulerType.Vertical = 'vertical';
     @property {string} PenDown Перо опущено
 */
 var EditorEventType = {};
-EditorEventType.PenDown = 'pendown';
-EditorEventType.PenUp = 'penup';
-EditorEventType.PenMove = 'penmove';
+EditorEventType.PenDown = 'PenDown';
+EditorEventType.PenUp = 'PenUp';
+EditorEventType.PenMove = 'PenMove';
 
 /** Режим редактора */
 var EditorMode = {};
-EditorMode.Select = 'select';
-EditorMode.Figure = 'figure';
-EditorMode.Connector = 'connector';
+EditorMode.Select = 'Select';
+EditorMode.Figure = 'Figure';
+EditorMode.Connector = 'Connector';
 
 /** Состояние действия */
 var EditorAction = {};

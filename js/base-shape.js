@@ -111,7 +111,7 @@ class BaseRectangle
 class BaseShape
 {
     /** Создание фигуры 
-     * @param {string} id -eникальный идентификатор фигуры
+     * @param {string} id - уникальный идентификатор фигуры
      * @param {number} left - x координата верхнего левого угла
      * @param {number} top - e координата верхнего левого угла
     */
@@ -140,12 +140,12 @@ class BaseShape
 
 class BaseFigureContour
 {
-    constructor()
+    constructor(left, top)
     {
         this.Id = Util.GenerateId();
-        this.SelfItem = document.createElement("g");
-        this.SelfItem.id = this.Id;
-        this.Coord = new BaseRectangle(0,0,0,0);
+        this.SelfElem = document.createElementNS(xmlns,"g");
+        this.SelfElem.id = this.Id;
+        this.Coord = new BaseRectangle(left,top, left,top);
         this.xVisible = false;
         this.svgrect = null;
     }
@@ -154,13 +154,14 @@ class BaseFigureContour
     Show()
     {
         if (!this.xVisible)
-        this.svgrect = document.createElement("rect");
+        this.svgrect = document.createElementNS(xmlns,"rect");
         this.svgrect.setAttributeNS(null, 'x', this.Coord.Left);
         this.svgrect.setAttributeNS(null, 'y', this.Coord.Top);
         this.svgrect.setAttributeNS(null, 'width', this.Coord.Width);
         this.svgrect.setAttributeNS(null, 'height', this.Coord.Height);
         this.svgrect.setAttributeNS(null, 'stroke', 'red');
-        if (!this.xVisible)  this.SelfItem.appendChild(this.svgrect);
+        this.svgrect.setAttributeNS(null, 'fill', 'none');
+        if (!this.xVisible)  this.SelfElem.appendChild(this.svgrect);
         this.xVisible = true;
     }
 
@@ -178,8 +179,9 @@ class BaseFigure extends BaseShape
 {
     constructor(id, left, top)
     {
-        super(id);
+        super(id, left, top);
         this.Type = 'figure';
+        this.Contour = null;
     }    
 
     /** Создать контур фигуры. Начало контура совпадает с верхним левым углом текущий фигуры. 
@@ -187,9 +189,7 @@ class BaseFigure extends BaseShape
      */
     CreateContour()
     {
-        this.Contour = new BaseFigureContour();
-        this.Contour.Coord.Left = this.Left;
-        this.Contour.Coord.Top = this.Top;
+        this.Contour = new BaseFigureContour(this.Left, this.Top);
         this.Contour.Coord.Width = this.Width;
         this.Contour.Coord.Height = this.Height;
         this.Contour.Show();
@@ -199,7 +199,7 @@ class BaseFigure extends BaseShape
     MoveCornerContour(right, bottom)
     {
         this.Contour.Coord.Right = right;
-        this.Contour.Coord.bottom = left;
+        this.Contour.Coord.Bottom = bottom;
         this.Contour.Show();
     }
 

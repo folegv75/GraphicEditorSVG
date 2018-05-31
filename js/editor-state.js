@@ -11,6 +11,7 @@ class EditorState
         this.Action = EditorAction.None;
         /** Текущая выделенная фигура */
         this.SelectedFigure = null;
+        this.ActionFigure = null;
         /** Фигура, с которой выполняется действие */
         this.ActionFigure = null;
         /** Последнее событие */
