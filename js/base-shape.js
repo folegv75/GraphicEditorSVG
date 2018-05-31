@@ -48,20 +48,29 @@ class BaseVector {
     }
 }
 
-class BaseRectangle
+class RectangleFixedCorners
 {
-    constructor (left, top, right, bottom)
+    /** Прямоугольник с фиксированным углом. */
+    constructor (left, top, width, height, fixLeft, fixTop, fixRight, fixBottom)
     {
-        this.xLeft = left;
-        this.xTop = top;
-        this.xRight = right;
-        this.xBottom = bottom;
+        /** сохранили стартовые координаты */
+        this.xLeftStart = left;
+        this.xTopStart = top;
+        this.xRightStart = left + width;
+        this.xBottomStart = top + height;
+        /** Координаты после изменения размерво. Изначально равны стартовым */
+        this.xLeft = this.xLeftStart;
+        this.xTop = this.xTopStart;
+        this.xRight = this.xRightStart;
+        this.xBottom = this.xBottomStart;
         /** Если координата зафиксирована, то при установке остальных она не изменяется. 
          * Используется для пересчета размеров относительно углов. Нужно зафиксировать координаты угла чтобы остальные координаты отсчитывались от него. */
-        /*this.FixLeft = false;
-        this.FixTop = false;
-        this.FixRight = false;
-        this.FixBottom = false;*/
+        this.FixLeft = fixLeft;
+        this.FixTop = fixTop;
+        this.FixRight = fixRight;
+        this.FixBottom = fixBottom;
+        this.SwapLR = false;
+        this.SwapTB = false;
     }
 
     get Left() { return this.xLeft; }
@@ -73,38 +82,50 @@ class BaseRectangle
 
     set Left(value) 
     {
-        if (value<=this.xRight) this.xLeft = value;
-        else this.xRight = value;
+        if (this.FixLeft) return;
+        //if (value<=this.xRight) this.xLeft = value;
+        //else this.xRight = value;
     }
     
     set Top(value) 
     {
-        if (value<=this.xBottom) this.xTop = value;
-        else this.xBottom = value;
+        if (this.FixTop) return;
+        //if (value<=this.xBottom) this.xTop = value;
+        //else this.xBottom = value;
     }
     
     set Right(value) 
     {
-        if (value>=this.xLeft) this.xRight = value;
-        else this.xLeft = value;
+        if (this.FixRight) return;
+        /** Считаем, что левый угол зафиксирован */
+        if (value>=this.xLeftStart)
+        {
+            this.xRight = value;
+            this.xLeft = this.xLeftStart;
+        } 
+        else 
+        {
+            this.xRight = this.xLeftStart;
+            this.xLeft = value;
+        }
     }
     
     set Bottom(value) 
     {
-        if (value>=this.xTop) this.xBottom = value;
-        else this.xTop = value;
+        if (this.FixBottom) return;
+        /** Считаем что верх зафиксирован */
+        if (value>=this.xTopStart) 
+        {
+            this.xBottom = value;
+            this.xTop = this.xTopStart;
+        }
+        else 
+        {
+            this.xBottom = this.xTopStart;
+            this.xTop = value;
+        }
     }
 
-    /** Ширина и высота всегда устанавилвается от левого верхнего угла */
-    set Width(value)
-    {
-        this.xRight = this.xLeft + value;
-    }
-
-    set Height(value)
-    {
-        this.xBottom = this.xTop + value;
-    }
 }
 
 /** Общий родитель для всех элементов (shape) отображаемых на холсте*/
@@ -140,12 +161,12 @@ class BaseShape
 
 class BaseFigureContour
 {
-    constructor(left, top)
+    constructor(left, top, width, height, fixLeft, fixTop, fixRight, fixBottom)
     {
+        this.FixedCorners = new RectangleFixedCorners(left, top, width, height, fixLeft, fixTop, fixRight, fixBottom);
         this.Id = Util.GenerateId();
         this.SelfElem = document.createElementNS(xmlns,"g");
         this.SelfElem.id = this.Id;
-        this.Coord = new BaseRectangle(left,top, left,top);
         this.xVisible = false;
         this.svgrect = null;
     }
@@ -153,12 +174,11 @@ class BaseFigureContour
 
     Show()
     {
-        if (!this.xVisible)
-        this.svgrect = document.createElementNS(xmlns,"rect");
-        this.svgrect.setAttributeNS(null, 'x', this.Coord.Left);
-        this.svgrect.setAttributeNS(null, 'y', this.Coord.Top);
-        this.svgrect.setAttributeNS(null, 'width', this.Coord.Width);
-        this.svgrect.setAttributeNS(null, 'height', this.Coord.Height);
+        if (!this.xVisible)  this.svgrect = document.createElementNS(xmlns,"rect");
+        this.svgrect.setAttributeNS(null, 'x', this.FixedCorners.Left);
+        this.svgrect.setAttributeNS(null, 'y', this.FixedCorners.Top);
+        this.svgrect.setAttributeNS(null, 'width', this.FixedCorners.Width);
+        this.svgrect.setAttributeNS(null, 'height', this.FixedCorners.Height);
         this.svgrect.setAttributeNS(null, 'stroke', 'red');
         this.svgrect.setAttributeNS(null, 'fill', 'none');
         if (!this.xVisible)  this.SelfElem.appendChild(this.svgrect);
@@ -189,17 +209,15 @@ class BaseFigure extends BaseShape
      */
     CreateContour()
     {
-        this.Contour = new BaseFigureContour(this.Left, this.Top);
-        this.Contour.Coord.Width = this.Width;
-        this.Contour.Coord.Height = this.Height;
+        this.Contour = new BaseFigureContour(this.Left, this.Top, this.Width, this.Height, true, true, false, false);
         this.Contour.Show();
     }
 
     /** Переместить нижний правый угол контура */
     MoveCornerContour(right, bottom)
     {
-        this.Contour.Coord.Right = right;
-        this.Contour.Coord.Bottom = bottom;
+        this.Contour.FixedCorners.Right = right;
+        this.Contour.FixedCorners.Bottom = bottom;
         this.Contour.Show();
     }
 
