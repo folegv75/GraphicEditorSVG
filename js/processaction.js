@@ -71,7 +71,6 @@ class ProcessAction
 
         MainApp.EditorState.Action = EditorAction.DrawFigure;
       }
-
   }
     
     /** Продолжить рисование фигуры */
@@ -83,13 +82,22 @@ class ProcessAction
     /** Принять рисование фигуры */
 	  ApproveDrawFigure(editorEvent)
     {
-		alert('Не реализовано.TODO');
-    }
+    MainApp.EditorState.ActionFigure.ApproveContour();
+    MainApp.EditorState.ActionFigure.Show();
+    MainApp.EditorState.ActionFigure.DeleteContour();
+    // добавляем фигуру на холст
+    this.Holst.Paper.LayerFigure.SelfElem.appendChild(MainApp.EditorState.ActionFigure.SelfElem);    
+
+    MainApp.EditorState.ActionFigure = null;
+    MainApp.EditorState.Action = EditorAction.None;
+  }
 
     /** Отменить рисование фигуры */
 	  CancelDrawFigure(editorEvent)
     {
-		alert('Не реализовано.TODO');
+      MainApp.EditorState.Action = EditorAction.None;
+      MainApp.EditorState.ActionFigure.DeleteContour();
+      MainApp.EditorState.ActionFigure = null;
     }
 
     /** Начать рисование коннектор с непривязанным началом  */

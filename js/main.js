@@ -57,7 +57,7 @@ class Application  extends BaseControl
     */        
     InitEventListener()
     {
-        document.addEventListener("keydown",this.OnKeyDown);
+        document.addEventListener("keydown",this.OnKeyDown.bind(this));
 
         this.ButtonSaveFile.SetOnClick(this.ButtonSaveFileOnClick.bind(this));
         this.ButtonLoadFile.SetOnClick(this.ButtonLoadFileOnClick.bind(this));
@@ -124,6 +124,9 @@ class Application  extends BaseControl
     */        
     OnKeyDown(Event)
     {
+        if (Event.key=='Escape') {
+            this.Holst.KeyDown(Event);
+        }
         console.log('KeyDown:',Event.key);
     }
 

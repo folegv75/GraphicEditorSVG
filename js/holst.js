@@ -144,6 +144,16 @@ class Holst extends BaseControl
 		this.PenChange(x, y, clientx, clienty, sourceEvent, EditorEventType.PenMove);
 	}
 
+	KeyDown(sourceEvent)
+	{
+
+		if (sourceEvent.key=='Escape') {
+			let editorEvent = new EditorEvent(EditorEventType.Cancel);		
+			editorEvent.SourceEvent = sourceEvent;
+			this.ProcessEvent(editorEvent);
+		}
+	}
+
 	// Найти верхнюю фигуру. Фигура это элемент <g>, у которого есть tag 'figuretype' 'figure' или  'connector'
 	FindTopFigureIdClientArea(x,y) 
 	{
@@ -170,7 +180,7 @@ class Holst extends BaseControl
 	 */
 	ProcessEvent(editorEvent)
 	{
-		console.log(editorEvent);
+		//console.log(editorEvent);
 		
 		MainApp.EditorState.LastEvent = editorEvent;
 		MainApp.EditorState.CalculateHash();
@@ -255,17 +265,17 @@ class Holst extends BaseControl
 			break;
 			case 'Figure-DrawFigure-PenUp':
 			{
-				// TODO
+				this.Actions.ApproveDrawFigure(editorEvent);
 			}
 			break;
 			case 'Figure-DrawFigure-SetMode':
 			{
-				// TODO
+				this.Actions.CancelDrawFigure(editorEvent);
 			}
 			break;
 			case 'Figure-DrawFigure-Cancel':
 			{
-				// TODO
+				this.Actions.CancelDrawFigure(editorEvent);
 			}
 			break;
 

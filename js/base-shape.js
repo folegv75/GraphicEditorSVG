@@ -145,6 +145,24 @@ class BaseShape
         this.Top = top;
         this.Width = 0;
         this.Height = 0;
+        this.xVivsible = false;
+    }
+
+    get Visible() { return this.xVisible;}
+    set Visible(value) 
+    {
+        if(value) this.Show();
+        else this.Hide();
+    }
+
+    Show()
+    {
+        this.xVisible = true;
+    }
+
+    Hide()
+    {
+        this.xVisible = false;
     }
 
     /** Показать выделение фигуры */
@@ -163,33 +181,37 @@ class BaseFigureContour
 {
     constructor(left, top, width, height, fixLeft, fixTop, fixRight, fixBottom)
     {
-        this.FixedCorners = new RectangleFixedCorners(left, top, width, height, fixLeft, fixTop, fixRight, fixBottom);
         this.Id = Util.GenerateId();
         this.SelfElem = document.createElementNS(xmlns,"g");
         this.SelfElem.id = this.Id;
         this.xVisible = false;
+        this.FixedCorners = new RectangleFixedCorners(left, top, width, height, fixLeft, fixTop, fixRight, fixBottom);
         this.svgrect = null;
+        // созданы или все элементы фигуры
+        // Если они созадны, то при отображении меняются только атрибуты
+        // инач создаются
+        this.subSvgCreated = false;
     }
 
 
     Show()
     {
-        if (!this.xVisible)  this.svgrect = document.createElementNS(xmlns,"rect");
+        if (!this.subSvgCreated)  this.svgrect = document.createElementNS(xmlns,"rect");
         this.svgrect.setAttributeNS(null, 'x', this.FixedCorners.Left);
         this.svgrect.setAttributeNS(null, 'y', this.FixedCorners.Top);
         this.svgrect.setAttributeNS(null, 'width', this.FixedCorners.Width);
         this.svgrect.setAttributeNS(null, 'height', this.FixedCorners.Height);
         this.svgrect.setAttributeNS(null, 'stroke', 'red');
         this.svgrect.setAttributeNS(null, 'fill', 'none');
-        if (!this.xVisible)  this.SelfElem.appendChild(this.svgrect);
-        this.xVisible = true;
+        if (!this.subSvgCreated)  this.SelfElem.appendChild(this.svgrect);
+        this.subSvgCreated = true;
     }
 
     Hide() 
     {
-        this.xVisible = false;
         this.svgrect = null;
-        this.SelfItem.innerHTML = "";
+        this.SelfElem.innerHTML = "";
+        this.subSvgCreated = false;
     }
 
 }
@@ -200,8 +222,37 @@ class BaseFigure extends BaseShape
     constructor(id, left, top)
     {
         super(id, left, top);
+        this.Id = Util.GenerateId();
+        this.SelfElem = document.createElementNS(xmlns,"g");
+        this.SelfElem.id = this.Id;        
         this.Type = 'figure';
+        this.SelfElem.setAttribute('figuretype',this.Type);
         this.Contour = null;
+        this.subSvgCreated = null;
+        this.svgrect = null;
+    }    
+
+
+    Show()
+    {
+        if (!this.subSvgCreated)  this.svgrect = document.createElementNS(xmlns,"rect");
+        this.svgrect.setAttributeNS(null, 'x', this.Left);
+        this.svgrect.setAttributeNS(null, 'y', this.Top);
+        this.svgrect.setAttributeNS(null, 'width', this.Width);
+        this.svgrect.setAttributeNS(null, 'height', this.Height);
+        this.svgrect.setAttributeNS(null, 'stroke', 'black');
+        this.svgrect.setAttributeNS(null, 'fill', 'white');
+        if (!this.subSvgCreated)  this.SelfElem.appendChild(this.svgrect);
+        this.subSvgCreated = true;
+        super.Show();
+    }
+
+    Hide() 
+    {
+        this.svgrect = null;
+        this.SelfElem.innerHTML = "";
+        this.subSvgCreated = false;
+        super.Hide();
     }    
 
     /** Создать контур фигуры. Начало контура совпадает с верхним левым углом текущий фигуры. 
@@ -213,6 +264,26 @@ class BaseFigure extends BaseShape
         this.Contour.Show();
     }
 
+    /** Установить размеры фигуры в соотвествии с контуром */
+    ApproveContour()
+    {
+        if (this.Contour!=null) 
+        {
+            this.Left = this.Contour.FixedCorners.Left;
+            this.Top = this.Contour.FixedCorners.Top;
+            this.Width = this.Contour.FixedCorners.Width;
+            this.Height = this.Contour.FixedCorners.Height;                
+        }
+    }
+
+    /** Удалить контур, фигуры не изменяется */
+    DeleteContour()
+    {
+        this.ContourLayer.SelfElem.removeChild(this.Contour.SelfElem);
+        this.Contour.Hide();
+        this.Contour = null;
+    }
+
     /** Переместить нижний правый угол контура */
     MoveCornerContour(right, bottom)
     {
@@ -221,6 +292,7 @@ class BaseFigure extends BaseShape
         this.Contour.Show();
     }
 
+    /** Показать текущий контур */
     ShowContour(layer)
     {
         this.ContourLayer = layer;
@@ -228,10 +300,12 @@ class BaseFigure extends BaseShape
         this.Contour.Show();
     }
 
+    /** Спрятать текущий контур */
     HideContour()
     {        
         this.Contour.Hide();
     }    
+
 }
 
 /** Базовый соединитель, представляет линию прямую без стрелок */
