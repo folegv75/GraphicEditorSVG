@@ -63,6 +63,7 @@ EditorEventType.PenDown = 'PenDown';
 EditorEventType.PenUp = 'PenUp';
 EditorEventType.PenMove = 'PenMove';
 EditorEventType.Cancel = 'Cancel';
+EditorEventType.Rename = 'Rename';
 
 /** Режим редактора */
 var EditorMode = {};

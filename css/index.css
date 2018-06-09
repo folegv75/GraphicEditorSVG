@@ -130,8 +130,15 @@ text:hover {
 }
 
 .info-label {
-	display: inline-block;
+	/*display: inline-block;*/
 	height: 18px;
+	font-size: 10pt;
+}
+
+.info-panel {
+	/*display: inline-block;*/
+	height: 54px;
+	font-size: 10pt;
 }
 
 /* SVG не прокручивается */
@@ -184,11 +191,18 @@ a  {
 }
 
 
-textarea.input-field {
-	font-size: 10pt;
+/* поле редактирования текст внутри фигуры*/
+div.input-field {
+	font-size: 12px;
 	font-family: "Noto Sans", sans-serif;
+	/* Вычисляются js скриптом
 	width:100%;
-	height:100%;
+	height:100%;*/
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 4px;
+	padding-right: 4px;
+	display: inline-block;
 }
 
 svg.ruler text {

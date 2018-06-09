@@ -17,7 +17,7 @@ class Grid extends Layer
     {        
         this.SelfElem.innerHTML = "";
         let gridgroup = document.createElementNS(xmlns, "g");
-        gridgroup.setAttributeNS(null, 'figuretype', 'grid');
+        //gridgroup.setAttributeNS(null, 'figuretype', 'grid');
         gridgroup.setAttributeNS(null, 'stroke', 'lightgray');
         gridgroup.setAttributeNS(null, 'stroke-width', '1');
  

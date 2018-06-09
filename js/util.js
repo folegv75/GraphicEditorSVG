@@ -36,4 +36,27 @@ class Util
         }
         return res;
     }
+
+    // Определить высоту текста через размер прямоугольника SVG
+    static GetTextHeight(fontsize, parentsvg) 
+    {
+	    let tempShape = document.createElementNS(xmlns, 'text');
+	    tempShape.setAttributeNS(null, 'x', 0);
+	    tempShape.setAttributeNS(null, 'y', 0);
+	    tempShape.setAttributeNS(null, 'font-size', fontsize);
+	    tempShape.innerHTML = "Mg";
+	    parentsvg.appendChild(tempShape);
+	    let realBound = tempShape.getBBox();
+
+	    // границы рассчитываются с учетом межстрочного интервала. Межстрочный интервал по умолчанию, половина высоту строки.
+	    parentsvg.removeChild(tempShape)
+	    let Res = {};
+	    // Расстояние между строками
+	    Res.Leading = realBound.height;
+
+	    // Сколько нужно добавить к baseline по y, чтобы верхний угол буквы вывелся в указанной координате
+	    Res.AddY = Math.round(50 - realBound.y - realBound.height / 2) + (realBound.y + realBound.height - 50);
+
+	    return Res;
+    }       
 }

@@ -23,6 +23,8 @@ class Holst extends BaseControl
 		this.RulerVertical.Show();
 		this.Paper = new Paper(Const.PaperId, this.RulerWidth, this.RulerWidth, StartWidth,StartWidth, 0,0);
 		this.Paper.Show();
+
+		this.ShapeList = new Object;
 		
         MainApp.ZoomManager.AppendView(this);
 	}
@@ -68,7 +70,7 @@ class Holst extends BaseControl
 					" cX=" +  editorEvent.ClientX + " cY=" +  editorEvent.ClientY + 
 					" " + editorEvent.Type + " " + MainApp.EditorState.Hash +
 					//" " + Util.PathToString(Util.ParentTreeToArray(editorEvent.TopElement), 'Holst') +
-					" " + " | TopFig: " + (editorEvent.TopFigure == null ? "nul" : editorEvent.TopFigure.tagName+"#"+editorEvent.TopFigure.id) +
+					" " + " | TopFig: " + (editorEvent.TopFigure == null ? "nul" : editorEvent.TopFigure.Caption+"#"+editorEvent.TopFigure.Id) +
 					" " + " | Layer: " + (editorEvent.Layer == null ? "nul" : editorEvent.Layer.Id) +
 					" " + " | Elem: " + (editorEvent.TopElement == null ? "nul" : editorEvent.TopElement.tagName+"#"+editorEvent.TopElement.id);
 		this.LabelStatusInfo.SetValue(st);
@@ -119,7 +121,14 @@ class Holst extends BaseControl
 		let topFigureId = this.FindTopFigureIdClientArea(clientx, clienty);
 		if (topFigureId!=null) 
 		{
-			editorEvent.TopFigure = document.getElementById(topFigureId);
+			/** Здесь нужно найти фигуру по id
+			 * Вариант 1. Найти элемент и по его типу создать фигуу и счтать из html элемента
+			 * Вариант 2. Хранить список фигур в массиве, и найти объект в массив по ID.
+			 */
+
+			let tf = this.ShapeList[topFigureId];
+			if (tf===undefined) editorEvent.TopFigure = null;
+			editorEvent.TopFigure = tf;
 		}
 
 		editorEvent.X = x - this.RulerWidth;
@@ -152,17 +161,24 @@ class Holst extends BaseControl
 			editorEvent.SourceEvent = sourceEvent;
 			this.ProcessEvent(editorEvent);
 		}
+		if (sourceEvent.key=='F2') {
+			let editorEvent = new EditorEvent(EditorEventType.Rename);		
+			editorEvent.SourceEvent = sourceEvent;
+			this.ProcessEvent(editorEvent);
+		}
 	}
 
 	// Найти верхнюю фигуру. Фигура это элемент <g>, у которого есть tag 'figuretype' 'figure' или  'connector'
 	FindTopFigureIdClientArea(x,y) 
 	{
 		// получили список фигур по координатами
-		let elems = document.elementsFromPoint(x, y);
-		for (let i=0; i<elems.length; i++)
-		{ 
+		//let elems = document.elementsFromPoint(x, y);
+		let elem = document.elementFromPoint(x, y);
+		//for (let i=0; i<elems.length; i++)
+		//{ 
 			//let currelem = elems[i];
-			let path = Util.ParentTreeToArray(elems[i]);
+			//let path = Util.ParentTreeToArray(elems[i]);
+			let path = Util.ParentTreeToArray(elem);
 			for (let i=0; i<path.length;i++)
 			{
 				let currelem = path[i];
@@ -170,9 +186,11 @@ class Holst extends BaseControl
 				if (currelem.tagName!='g') continue;
 				let figuretype = currelem.getAttribute('figuretype');
 				if (figuretype==null) continue;
+				if (currelem.id=='') continue;
 				return currelem.id;
 			}
-		}
+		//}
+		return null;
 	}
 
 	/** @desc обработать событие редактора
@@ -191,12 +209,16 @@ class Holst extends BaseControl
 		{
 			case 'Select-None-PenDown':
 			{
-				this.Actions.SelectFigure(editorEvent);
+				if (editorEvent.TopFigure != null && MainApp.EditorState.SelectedFigure == editorEvent.TopFigure)
+				{
+					// нажали на уже выделенную фигуру, значит ее перемещаем или изменяем размеры
+					this.Actions.BeginMoveFigure(editorEvent);
+				}
+				else this.Actions.SelectFigure(editorEvent);
 			}
 			break;
 			case 'Select-None-PenMove':
 			{
-				// TODO
 			}
 			break;			
 			case 'Select-None-SetMode':
@@ -206,18 +228,18 @@ class Holst extends BaseControl
 			break;
 			case 'Select-None-Rename':
 			{
-				// TODO
+				this.Actions.BeginRenameFigure(editorEvent);
 			}
 			break;
 
 			case 'Select-MoveFigure-PenMove':
 			{
-				// TODO
+				this.Actions.ContinueMoveFigure(editorEvent);
 			}
 			break;
 			case 'Select-MoveFigure-PenUp':
 			{
-				// TODO
+				this.Actions.ApproveMoveFigure(editorEvent);;
 			}
 			break;
 			case 'Select-MoveFigure-SetMode':
@@ -227,7 +249,7 @@ class Holst extends BaseControl
 			break;
 			case 'Select-MoveFigure-Cancel':
 			{
-				// TODO
+				this.Actions.CancelMoveFigure(editorEvent);;
 			}
 			break;
 
@@ -239,11 +261,12 @@ class Holst extends BaseControl
 
 			case 'Select-RenameFigure-Cancel':
 			{
-				// TODO
+				this.Actions.CancelRenameFigure(editorEvent);
 			}
 			break;
 			case 'Select-RenameFigure-Rename':
 			{
+				this.Actions.ApproveRenameFigure(editorEvent);
 				// TODO
 			}
 			break;

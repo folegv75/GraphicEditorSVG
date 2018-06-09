@@ -111,7 +111,7 @@ class Application  extends BaseControl
 
         /* margin body 8 + 8 + ширина меню 86 + бордюр меню 1 + 1 + отступ холста 4 + бордюр холста 1 + 1  Скроллер справ 17*/
        let hW = W - 110 - 17;
-        /* margin body 8 + 8 + высота статус строк 18 + 36 + бордюр холста 1 + 1  */
+        /* margin body 8 + 8 + высота статус строк 18 + 36 + бордюр холста 1 + 1  10 - добавка на всякий случай*/
         let hH = H - 72;
 
 
@@ -124,7 +124,7 @@ class Application  extends BaseControl
     */        
     OnKeyDown(Event)
     {
-        if (Event.key=='Escape') {
+        if (Event.key=='Escape' || Event.key=='F2') {
             this.Holst.KeyDown(Event);
         }
         console.log('KeyDown:',Event.key);

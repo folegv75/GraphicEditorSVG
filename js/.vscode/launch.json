@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Запустить Chrome для localhost",
-            "url": "http://localhost:8080",
+            "url": "file:///C:/DevJS/GraphicEditorSVG/index-main.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

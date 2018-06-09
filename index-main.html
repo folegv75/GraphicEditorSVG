@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML>
 <html id='Main-Application'>
 
 <head>
@@ -10,8 +10,14 @@
 
 	<script src="js/const.js"></script>
 	<script src="js/util.js"></script>
+	<script src="js/base-point.js"></script>
+	<script src="js/base-vector.js"></script>
+	<script src="js/rectangle-fixed-corners.js"></script>
 	<script src="js/base-control.js"></script>
 	<script src="js/base-shape.js"></script>
+	<script src="js/base-figure.js"></script>
+	<script src="js/base-figure-contour.js"></script>
+	<script src="js/base-connector.js"></script>
 	<script src="js/label.js"></script>
 	<script src="js/button.js"></script>
 	<script src="js/layer.js"></script>
@@ -28,17 +34,21 @@
 </head>
 
 <body>
-	<div id='status-line'>
-		<span class='info-label' id='lblStatusInfo'></span>
-	</div>
-	<div class='debug-info' id='debug-info'>
-			<div>
+
+	<div id='status-line' class='info-panel'>
+		<div>
+				<span class='info-label' id='lblStatusInfo'></span>
+		</div>
+		<div>
 				<span class='info-label' id='lblMouseInfo'></span>
-			</div>
-			<div>
+		</div>
+	
+		<div>
 				<span class='info-label' id='lblTouchInfo'></span>
-			</div>
+		</div>
+	
 	</div>
+	
 <div class='main-window' id='mainwindow'>
 		<div class='menu' id='mainmenu'>
 			<div class="menu-line">
