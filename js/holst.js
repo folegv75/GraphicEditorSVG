@@ -80,6 +80,8 @@ class Holst extends BaseControl
 	/** обработка изменения координата пера и генерация события
 	 * @param x {number} координата X относительно нуля холста
 	 * @param y {number} координата Y относительно нуля холста
+	 * @param clientx {number} координата X относительно нуля окна
+	 * @param clienty {number} координата Y относительно нуля окна
 	 */
 	PenChange(x, y, clientx, clienty, sourceEvent, evtype)
 	{
@@ -88,9 +90,8 @@ class Holst extends BaseControl
 		editorEvent.SourceEvent = sourceEvent;
 		editorEvent.ClientX = clientx;
 		editorEvent.ClientY = clienty;
-		editorEvent.TopElement = null;
-		editorEvent.TopFigure = null;
-		editorEvent.Layer = null;
+		editorEvent.X = x - this.RulerWidth;
+		editorEvent.Y = y - this.RulerWidth;
 
 		// координаты относительно верxнего левого угла окна рабочей области браузера
 		editorEvent.TopElement = document.elementFromPoint(clientx, clienty);
@@ -122,17 +123,18 @@ class Holst extends BaseControl
 		if (topFigureId!=null) 
 		{
 			/** Здесь нужно найти фигуру по id
-			 * Вариант 1. Найти элемент и по его типу создать фигуу и счтать из html элемента
+			 * Вариант 1. Найти элемент и по его типу создать фигуру и считать из html элемента
 			 * Вариант 2. Хранить список фигур в массиве, и найти объект в массив по ID.
 			 */
 
 			let tf = this.ShapeList[topFigureId];
 			if (tf===undefined) editorEvent.TopFigure = null;
 			editorEvent.TopFigure = tf;
+			
+			qwerty
+			/** Спросить у фигуры куда в нее нажали, чтобы определить какое изменение надо делать Перемещение фигуры, изменение размера (формы) перемещение точки крепления...*/
 		}
 
-		editorEvent.X = x - this.RulerWidth;
-		editorEvent.Y = y - this.RulerWidth;
 		
 	   this.ProcessEvent(editorEvent);
 		
