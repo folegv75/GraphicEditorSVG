@@ -78,3 +78,9 @@ EditorAction.MoveFigure = 'MoveFigure';
 EditorAction.DrawFigure = 'DrawFigure';
 EditorAction.DrawConnector = 'DrawConnector';
 EditorAction.RenameFigure = 'RenameFigure';
+
+/** Тип координаты фигуры */
+var ShapeTypeCoordinates = {};
+ShapeTypeCoordinates.None = 'None';
+ShapeTypeCoordinates.Figure = 'Figure';
+ShapeTypeCoordinates.Border = 'Border';

@@ -128,11 +128,20 @@ class Holst extends BaseControl
 			 */
 
 			let tf = this.ShapeList[topFigureId];
-			if (tf===undefined) editorEvent.TopFigure = null;
-			editorEvent.TopFigure = tf;
+			if (tf===undefined) {
+				editorEvent.TopFigure = null;
+				editorEvent.TypeCoordinates =  null;
+			}
+			else 
+			{
+				editorEvent.TopFigure = tf;
 			
-			qwerty
-			/** Спросить у фигуры куда в нее нажали, чтобы определить какое изменение надо делать Перемещение фигуры, изменение размера (формы) перемещение точки крепления...*/
+				//qwerty
+				/** Спросить у фигуры куда в нее нажали, чтобы определить какое изменение надо делать Перемещение фигуры, изменение размера (формы) перемещение точки крепления...*/
+				editorEvent.TypeCoordinates = editorEvent.TopFigure.GetTypeCoordinates(editorEvent.X, editorEvent.Y);
+				console.log(editorEvent.TypeCoordinates);
+			}
+
 		}
 
 		

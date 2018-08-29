@@ -29,6 +29,8 @@ class EditorEvent
         this.TopFigure = null;
         this.TopElement= null;
         this.Layer = null;
+        /** Тип координаты фигуры, если нажали на фигуру */
+        this.TypeCoordinates = null;
 
     }
 

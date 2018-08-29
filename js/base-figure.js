@@ -194,5 +194,19 @@ class BaseFigure extends BaseShape
         this.Contour.Hide();
     }    
 
+    /** Определить тип координаты в фигуре */
+    GetTypeCoordinates(x,y)
+    {
+        if (x<this.Left || x>this.Right || y<this.Top || y>this.Bottom) return ShapeTypeCoordinates.None;
+        let borderWidth = 5;
+        /** Если попали в границу фигуру шириной 5 пикселов, значит это граница */
+        if (
+            (x>=this.Left && x<=this.Left+borderWidth) || (x<=this.Right && x>=this.Right-borderWidth) || 
+            (y>=this.Top && y<=this.Top+borderWidth) || (y<=this.Bottom && y>=this.Bottom-borderWidth) 
+        ) return ShapeTypeCoordinates.Border;
+        
+        return ShapeTypeCoordinates.Figure;
+    }
+
 }
 
